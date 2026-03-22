@@ -259,6 +259,32 @@
     .qs-comment { color:var(--text-muted); font-style:italic; }
     .qs-section-note { font-size:.72rem; color:var(--text-muted); margin-top:.8rem; font-style:italic; display:flex; align-items:center; gap:6px; }
 
+    .setup-disclaimer { display:flex; align-items:flex-start; gap:9px; background:var(--accent-soft); border:1px solid var(--accent-glow); border-radius:var(--r-xs); padding:10px 14px; font-size:.76rem; color:var(--text-2); line-height:1.6; margin-bottom:1.2rem; }
+    .sd-icon { font-size:1rem; flex-shrink:0; margin-top:1px; }
+    .setup-section { margin-bottom:1.5rem; }
+    .setup-section-title { font-size:.72rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); margin-bottom:.75rem; display:flex; align-items:center; gap:8px; }
+    .setup-section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+    .setup-section-title .setup-icon { font-size:1rem; }
+    .setup-block { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-sm); overflow:hidden; margin-bottom:.6rem; }
+    .setup-block-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--border); }
+    .setup-block-label { font-size:.8rem; font-weight:700; color:var(--text); }
+    .setup-block-meta { font-size:.7rem; color:var(--text-muted); font-weight:500; }
+    .setup-code { padding:11px 14px; font-family:'JetBrains Mono',monospace; font-size:.77rem; line-height:1.7; color:var(--text); white-space:pre-wrap; word-break:break-all; }
+    .setup-link-row { display:flex; align-items:center; gap:8px; padding:10px 14px; flex-wrap:wrap; }
+    .setup-link { display:inline-flex; align-items:center; gap:5px; background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent-glow); padding:4px 12px; border-radius:20px; font-size:.75rem; font-weight:700; text-decoration:none; transition:all var(--t); }
+    .setup-link:hover { background:var(--accent); color:#fff; }
+    .setup-link:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    .setup-note { font-size:.72rem; color:var(--text-muted); font-style:italic; margin-top:.4rem; padding:0 14px 10px; }
+    .setup-build-toggle { display:flex; gap:6px; margin-bottom:.75rem; }
+    .setup-toggle-btn { padding:5px 16px; border-radius:20px; border:1.5px solid var(--border); background:transparent; color:var(--text-muted); font-family:'Outfit',sans-serif; font-size:.78rem; font-weight:700; cursor:pointer; transition:all var(--t); }
+    .setup-toggle-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .setup-toggle-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    .setup-copy-btn { background:var(--surface-3); border:1px solid var(--border); border-radius:var(--r-xs); color:var(--text-muted); font-size:.7rem; font-weight:700; padding:3px 9px; cursor:pointer; transition:all var(--t); font-family:'Outfit',sans-serif; display:inline-flex; align-items:center; gap:4px; }
+    .setup-copy-btn:hover { background:var(--accent-soft); color:var(--accent); border-color:var(--accent); }
+    .setup-copy-btn.copied { background:var(--green-soft); color:var(--green-text); border-color:var(--green); }
+    [data-theme="dark"] .setup-copy-btn.copied { color:var(--green); }
+    .setup-copy-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
     /* TOAST */
     #toast { position:fixed; bottom:1.5rem; right:1.5rem; background:var(--text); color:var(--bg); padding:11px 18px; border-radius:var(--r-sm); font-size:.84rem; font-weight:700; box-shadow:var(--shadow-lg); transform:translateY(80px) scale(.95); opacity:0; transition:all .35s cubic-bezier(.34,1.56,.64,1); z-index:999; pointer-events:none; display:flex; align-items:center; gap:8px; }
     #toast.show { transform:translateY(0) scale(1); opacity:1; }
@@ -458,6 +484,7 @@
         <button class="output-tab active" id="out-tab-locators" role="tab" aria-selected="true">📍 Locators</button>
         <button class="output-tab" id="out-tab-actions" role="tab" aria-selected="false">⚡ Actions</button>
         <button class="output-tab" id="out-tab-quickstart" role="tab" aria-selected="false">🚀 Quick Start</button>
+        <button class="output-tab" id="out-tab-setup" role="tab" aria-selected="false">⚙️ Setup</button>
       </div>
       <div id="out-panel-locators">
         <div class="locator-list" id="locatorList"></div>
@@ -467,6 +494,9 @@
       </div>
       <div id="out-panel-quickstart" class="hidden">
         <div id="quickStartContent"></div>
+      </div>
+      <div id="out-panel-setup" class="hidden">
+        <div id="setupContent"></div>
       </div>
     </div>
   </div>
@@ -690,12 +720,13 @@
     section.scrollIntoView({behavior:'smooth',block:'nearest'});
     renderActions(props);
     renderQuickStart(props);
+    renderSetup();
   }
 
   // -- OUTPUT TABS --
   function setOutputTab(tab){
     state.outputTab=tab;
-    ['locators','actions','quickstart'].forEach(t=>{
+    ['locators','actions','quickstart','setup'].forEach(t=>{
       document.getElementById('out-tab-'+t).classList.toggle('active',t===tab);
       document.getElementById('out-tab-'+t).setAttribute('aria-selected',t===tab);
       document.getElementById('out-panel-'+t).classList.toggle('hidden',t!==tab);
@@ -704,6 +735,7 @@
   document.getElementById('out-tab-locators').addEventListener('click',()=>setOutputTab('locators'));
   document.getElementById('out-tab-actions').addEventListener('click',()=>setOutputTab('actions'));
   document.getElementById('out-tab-quickstart').addEventListener('click',()=>setOutputTab('quickstart'));
+  document.getElementById('out-tab-setup').addEventListener('click',()=>setOutputTab('setup'));
 
   // -- QUICK START SNIPPETS --
   function buildQuickStartSnippet(props, fw, lang) {
@@ -1130,6 +1162,332 @@
         setTimeout(() => { copyBtn.classList.remove('copy-err'); copyBtn.querySelector('.qs-cl').textContent = 'Copy All'; }, 2500);
       });
     });
+  }
+
+  // -- SETUP DATA --
+  const SETUP_DATA = {
+    // -- SELENIUM --
+    selenium: {
+      Java: {
+        runtime: {
+          label:'Java Development Kit (JDK)',
+          note:'JDK 21 LTS recommended — free, long-term support.',
+          links:[
+            {label:'☕ Oracle JDK', url:'https://www.oracle.com/java/technologies/downloads/'},
+            {label:'🆓 OpenJDK (free)', url:'https://adoptium.net/temurin/releases/'}
+          ],
+          verify:'java -version\njavac -version'
+        },
+        buildTools:['Maven','Gradle'],
+        Maven: {
+          label:'Maven — pom.xml dependency',
+          note:'Maven Repo: https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java',
+          code:`<dependency>\n  <groupId>org.seleniumhq.selenium</groupId>\n  <artifactId>selenium-java</artifactId>\n  <version><!-- add latest version --></version>\n</dependency>`
+        },
+        Gradle: {
+          label:'Gradle — build.gradle dependency',
+          note:'Same artifact — add to your dependencies block.',
+          code:`testImplementation 'org.seleniumhq.selenium:selenium-java:<!-- add latest version -->'`
+        },
+        ide:{label:'IntelliJ IDEA (recommended) or Eclipse',links:[{label:'⬇️ IntelliJ IDEA',url:'https://www.jetbrains.com/idea/download/'},{label:'⬇️ Eclipse IDE',url:'https://www.eclipse.org/downloads/'}]},
+        browser:{
+          label:'Browser Driver Setup',
+          note:'Selenium Manager (built into Selenium 4.6+) automatically downloads and manages ChromeDriver, GeckoDriver, and EdgeDriver. No manual setup required.',
+          code:`// No driver setup needed — Selenium Manager handles it automatically.\n// Just instantiate your browser of choice:\nWebDriver driver = new ChromeDriver();\n// WebDriver driver = new FirefoxDriver();\n// WebDriver driver = new EdgeDriver();\n// WebDriver driver = new SafariDriver();`
+        },
+        verify:'mvn --version\n# or\ngradle --version'
+      },
+      Python: {
+        runtime:{
+          label:'Python 3.9+',
+          note:'Python 3.9 or higher required.',
+          links:[{label:'🐍 Python Downloads',url:'https://www.python.org/downloads/'}],
+          verify:'python --version\npip --version'
+        },
+        buildTools:['pip'],
+        pip:{
+          label:'pip — install Selenium',
+          note:'Installs selenium and all required packages.',
+          code:`pip install selenium`
+        },
+        ide:{label:'VS Code (recommended) or PyCharm',links:[{label:'⬇️ VS Code',url:'https://code.visualstudio.com/'},{label:'⬇️ PyCharm',url:'https://www.jetbrains.com/pycharm/download/'}]},
+        browser:{
+          label:'Browser Driver Setup',
+          note:'Selenium Manager (built into Selenium 4.6+) automatically downloads and manages browser drivers. No manual ChromeDriver download required.',
+          code:`# No driver setup needed — Selenium Manager handles it automatically.\n# Just instantiate your browser of choice:\ndriver = webdriver.Chrome()\n# driver = webdriver.Firefox()\n# driver = webdriver.Edge()\n# driver = webdriver.Safari()`
+        },
+        verify:'python -c "import selenium; print(selenium.__version__)"'
+      },
+      'C#': {
+        runtime:{
+          label:'.NET SDK 6.0+',
+          note:'.NET 8 LTS recommended.',
+          links:[{label:'⬇️ .NET Downloads',url:'https://dotnet.microsoft.com/download'}],
+          verify:'dotnet --version'
+        },
+        buildTools:['NuGet'],
+        NuGet:{
+          label:'NuGet — Package Manager Console',
+          note:'Run inside Visual Studio Package Manager Console or dotnet CLI.',
+          code:`# dotnet CLI:\ndotnet add package Selenium.WebDriver\ndotnet add package Selenium.WebDriver.ChromeDriver\n\n# Package Manager Console (Visual Studio):\nInstall-Package Selenium.WebDriver\nInstall-Package Selenium.WebDriver.ChromeDriver`
+        },
+        ide:{label:'Visual Studio (recommended) or VS Code',links:[{label:'⬇️ Visual Studio',url:'https://visualstudio.microsoft.com/downloads/'},{label:'⬇️ VS Code + C# ext',url:'https://code.visualstudio.com/'}]},
+        browser:{
+          label:'Browser Driver Setup',
+          note:'Selenium Manager (built into Selenium 4.6+) automatically downloads and manages browser drivers. No manual setup required.',
+          code:`// No driver setup needed — Selenium Manager handles it automatically.\n// Just instantiate your browser of choice:\nIWebDriver driver = new ChromeDriver();\n// IWebDriver driver = new FirefoxDriver();\n// IWebDriver driver = new EdgeDriver();`
+        },
+        verify:'dotnet list package | grep Selenium'
+      },
+      JavaScript: {
+        runtime:{
+          label:'Node.js 18+ & npm',
+          note:'LTS version recommended.',
+          links:[{label:'⬇️ Node.js Downloads',url:'https://nodejs.org/en/download/'}],
+          verify:'node --version\nnpm --version'
+        },
+        buildTools:['npm'],
+        npm:{
+          label:'npm — install selenium-webdriver',
+          note:'npm Registry: https://www.npmjs.com/package/selenium-webdriver',
+          code:`npm install selenium-webdriver\n\n# Optional — type definitions for IDE support:\nnpm install --save-dev @types/selenium-webdriver`
+        },
+        ide:{label:'VS Code (recommended)',links:[{label:'⬇️ VS Code',url:'https://code.visualstudio.com/'}]},
+        browser:{
+          label:'Browser Driver Setup',
+          note:'Selenium Manager (built into Selenium 4.6+) automatically downloads and manages browser drivers. No manual ChromeDriver needed.',
+          code:`// No driver setup needed — Selenium Manager handles it automatically.\n// Just instantiate your browser of choice:\nconst driver = await new Builder().forBrowser('chrome').build();\n// const driver = await new Builder().forBrowser('firefox').build();\n// const driver = await new Builder().forBrowser('MicrosoftEdge').build();`
+        },
+        verify:'node -e "const {Builder}=require(\'selenium-webdriver\');console.log(\'OK\')"'
+      },
+      Ruby: {
+        runtime:{
+          label:'Ruby 3.1+',
+          note:'Ruby 3.2 or higher recommended.',
+          links:[{label:'💎 Ruby Downloads',url:'https://www.ruby-lang.org/en/downloads/'},{label:'🪟 RubyInstaller (Windows)',url:'https://rubyinstaller.org/'}],
+          verify:'ruby --version\ngem --version'
+        },
+        buildTools:['Bundler/Gemfile'],
+        'Bundler/Gemfile':{
+          label:'Gemfile dependency',
+          note:'Add to your Gemfile, then run bundle install.',
+          code:`# In your Gemfile:\ngem 'selenium-webdriver'\n\n# Then run:\nbundle install`
+        },
+        ide:{label:'RubyMine or VS Code',links:[{label:'⬇️ RubyMine',url:'https://www.jetbrains.com/ruby/download/'},{label:'⬇️ VS Code',url:'https://code.visualstudio.com/'}]},
+        browser:{
+          label:'Browser Driver Setup',
+          note:'Selenium Manager (built into Selenium 4.6+) automatically downloads and manages browser drivers. No manual setup required.',
+          code:`# No driver setup needed — Selenium Manager handles it automatically.\n# Just instantiate your browser of choice:\ndriver = Selenium::WebDriver.for :chrome\n# driver = Selenium::WebDriver.for :firefox\n# driver = Selenium::WebDriver.for :edge\n# driver = Selenium::WebDriver.for :safari`
+        },
+        verify:'ruby -e "require \'selenium-webdriver\'; puts Selenium::VERSION"'
+      }
+    },
+
+    // -- PLAYWRIGHT --
+    playwright: {
+      JavaScript: {
+        runtime:{label:'Node.js 18+ & npm',note:'LTS version recommended.',links:[{label:'⬇️ Node.js',url:'https://nodejs.org/en/download/'}],verify:'node --version\nnpm --version'},
+        buildTools:['npm'],
+        npm:{label:'npm — init Playwright project',note:'Official docs: https://playwright.dev/docs/intro',code:`# Recommended — scaffolds full project:\nnpm init playwright@latest\n\n# Or add to existing project:\nnpm install --save-dev @playwright/test\nnpx playwright install`},
+        ide:{label:'VS Code + Playwright extension (recommended)',links:[{label:'⬇️ VS Code',url:'https://code.visualstudio.com/'},{label:'🎭 PW VS Code Extension',url:'https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright'}]},
+        browser:{label:'Browser Binaries',note:'Playwright bundles its own browsers — no separate ChromeDriver needed!',code:`# Install all browsers (Chromium, Firefox, WebKit):\nnpx playwright install\n\n# Install specific browser only:\nnpx playwright install chromium`},
+        verify:'npx playwright --version'
+      },
+      TypeScript: {
+        runtime:{label:'Node.js 18+ & npm',note:'TypeScript support is built-in — no extra config needed.',links:[{label:'⬇️ Node.js',url:'https://nodejs.org/en/download/'}],verify:'node --version\nnpm --version'},
+        buildTools:['npm'],
+        npm:{label:'npm — init Playwright project (TypeScript)',note:'Official docs: https://playwright.dev/docs/intro',code:`# Recommended — scaffolds TypeScript project:\nnpm init playwright@latest\n# Choose TypeScript when prompted\n\n# Or manually:\nnpm install --save-dev @playwright/test typescript\nnpx playwright install`},
+        ide:{label:'VS Code + Playwright extension (recommended)',links:[{label:'⬇️ VS Code',url:'https://code.visualstudio.com/'},{label:'🎭 PW VS Code Extension',url:'https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright'}]},
+        browser:{label:'Browser Binaries',note:'Playwright bundles its own browsers — no ChromeDriver needed!',code:`npx playwright install\n# Installs Chromium, Firefox, and WebKit`},
+        verify:'npx playwright --version\nnpx tsc --version'
+      },
+      Python: {
+        runtime:{label:'Python 3.9+',note:'Python 3.9 or higher required.',links:[{label:'🐍 Python Downloads',url:'https://www.python.org/downloads/'}],verify:'python --version\npip --version'},
+        buildTools:['pip'],
+        pip:{label:'pip — install Playwright',note:'Official docs: https://playwright.dev/python/docs/intro',code:`pip install playwright\nplaywright install`},
+        ide:{label:'VS Code or PyCharm',links:[{label:'⬇️ VS Code',url:'https://code.visualstudio.com/'},{label:'⬇️ PyCharm',url:'https://www.jetbrains.com/pycharm/download/'}]},
+        browser:{label:'Browser Binaries',note:'Playwright installs its own browsers — no external drivers needed!',code:`# Already handled by:\nplaywright install\n\n# Install specific browser:\nplaywright install chromium`},
+        verify:'python -c "from playwright.sync_api import sync_playwright; print(\'Playwright OK\')"'
+      },
+      Java: {
+        runtime:{label:'Java Development Kit (JDK)',note:'JDK 21 LTS recommended.',links:[{label:'☕ Oracle JDK',url:'https://www.oracle.com/java/technologies/downloads/'},{label:'🆓 OpenJDK',url:'https://adoptium.net/temurin/releases/'}],verify:'java -version'},
+        buildTools:['Maven','Gradle'],
+        Maven:{label:'Maven — pom.xml dependency',note:'Official docs: https://playwright.dev/java/docs/intro — Maven Repo: https://mvnrepository.com/artifact/com.microsoft.playwright/playwright',code:`<dependency>\n  <groupId>com.microsoft.playwright</groupId>\n  <artifactId>playwright</artifactId>\n  <version><!-- add latest version --></version>\n</dependency>`},
+        Gradle:{label:'Gradle — build.gradle dependency',code:`implementation 'com.microsoft.playwright:playwright:<!-- add latest version -->'`},
+        ide:{label:'IntelliJ IDEA (recommended)',links:[{label:'⬇️ IntelliJ IDEA',url:'https://www.jetbrains.com/idea/download/'}]},
+        browser:{label:'Browser Binaries',note:'Playwright downloads browsers automatically on first run.',code:`// Browsers download automatically on first use.\n// Or install explicitly via CLI:\n// mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install"`},
+        verify:'mvn --version'
+      },
+      'C#': {
+        runtime:{label:'.NET SDK 6.0+',note:'.NET 8 LTS recommended.',links:[{label:'⬇️ .NET Downloads',url:'https://dotnet.microsoft.com/download'}],verify:'dotnet --version'},
+        buildTools:['NuGet'],
+        NuGet:{label:'NuGet — dotnet CLI',note:'Official docs: https://playwright.dev/dotnet/docs/intro',code:`dotnet add package Microsoft.Playwright\ndotnet build\npwsh bin/Debug/net8.0/playwright.ps1 install`},
+        ide:{label:'Visual Studio or VS Code',links:[{label:'⬇️ Visual Studio',url:'https://visualstudio.microsoft.com/downloads/'},{label:'⬇️ VS Code',url:'https://code.visualstudio.com/'}]},
+        browser:{label:'Browser Binaries',note:'Run the playwright.ps1 install script after building — this downloads browser binaries.',code:`# After dotnet build, run:\npwsh bin/Debug/net8.0/playwright.ps1 install\n\n# Or install specific browser:\npwsh bin/Debug/net8.0/playwright.ps1 install chromium`},
+        verify:'dotnet list package | grep Playwright'
+      }
+    },
+
+    // -- CYPRESS --
+    cypress: {
+      JavaScript: {
+        runtime:{label:'Node.js 18+ & npm',note:'Node.js 18 or higher required. LTS recommended.',links:[{label:'⬇️ Node.js',url:'https://nodejs.org/en/download/'}],verify:'node --version\nnpm --version'},
+        buildTools:['npm'],
+        npm:{label:'npm — install Cypress',note:'Official docs: https://docs.cypress.io/app/get-started/install-cypress',code:`# In your project root:\nnpm init -y\nnpm install --save-dev cypress\n\n# Open Cypress to complete setup:\nnpx cypress open`},
+        ide:{label:'VS Code + Cypress extension (recommended)',links:[{label:'⬇️ VS Code',url:'https://code.visualstudio.com/'},{label:'🌲 Cypress VS Code Ext',url:'https://marketplace.visualstudio.com/items?itemName=Cypress-io.cypress'}]},
+        browser:{label:'Browser Setup',note:'Cypress uses browsers already installed on your machine — Chrome, Edge, Firefox, Electron (bundled).',code:`# Cypress auto-detects installed browsers.\n# Run with specific browser:\nnpx cypress run --browser chrome\nnpx cypress run --browser firefox\nnpx cypress run --browser edge`},
+        verify:'npx cypress verify\nnpx cypress --version'
+      },
+      TypeScript: {
+        runtime:{label:'Node.js 18+ & npm',note:'TypeScript support built-in with Cypress 10+.',links:[{label:'⬇️ Node.js',url:'https://nodejs.org/en/download/'}],verify:'node --version\nnpm --version'},
+        buildTools:['npm'],
+        npm:{label:'npm — install Cypress with TypeScript',note:'Official docs: https://docs.cypress.io/app/tooling/typescript-support',code:`npm init -y\nnpm install --save-dev cypress typescript\n\n# Create tsconfig.json:\nnpx tsc --init\n\n# Open Cypress:\nnpx cypress open`},
+        ide:{label:'VS Code + Cypress extension',links:[{label:'⬇️ VS Code',url:'https://code.visualstudio.com/'},{label:'🌲 Cypress VS Code Ext',url:'https://marketplace.visualstudio.com/items?itemName=Cypress-io.cypress'}]},
+        browser:{label:'Browser Setup',note:'Cypress uses browsers already on your machine — Chrome, Edge, Firefox, Electron (bundled).',code:`npx cypress run --browser chrome\nnpx cypress run --browser firefox\n\n# List detected browsers:\nnpx cypress info`},
+        verify:'npx cypress verify\nnpx tsc --version'
+      }
+    }
+  };
+
+  // -- RENDER SETUP --
+  function renderSetup() {
+    const fw   = state.framework;
+    const lang = state.language;
+    const container = document.getElementById('setupContent');
+    container.innerHTML = '';
+
+    const data = SETUP_DATA[fw] && SETUP_DATA[fw][lang];
+    if (!data) {
+      container.innerHTML = '<div class="empty-state"><span class="es-icon">⚙️</span><p>Setup guide not available for this combination.</p></div>';
+      return;
+    }
+
+    // Disclaimer banner
+    const disclaimer = document.createElement('div');
+    disclaimer.className = 'setup-disclaimer';
+    disclaimer.innerHTML = `<span class="sd-icon">🔗</span><span>Links and package versions were verified at build time. They may change over time — if a link doesn't work, search the tool's official site for the latest install guide.</span>`;
+    container.appendChild(disclaimer);
+
+    const fwName   = FRAMEWORKS[fw].name;
+    const buildTools = data.buildTools || [];
+    // Track active build tool per render
+    let activeBuild = buildTools[0] || null;
+
+    // Helper: create a copyable code block
+    function makeBlock(labelText, metaText, codeText, noteText) {
+      const block = document.createElement('div');
+      block.className = 'setup-block';
+      const hdr = document.createElement('div');
+      hdr.className = 'setup-block-header';
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'setup-copy-btn';
+      copyBtn.innerHTML = '⎘ <span class="scl">Copy</span>';
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(codeText).then(() => {
+          copyBtn.classList.add('copied');
+          copyBtn.querySelector('.scl').textContent = 'Copied!';
+          showToast('Copied!');
+          setTimeout(() => { copyBtn.classList.remove('copied'); copyBtn.querySelector('.scl').textContent = 'Copy'; }, 1800);
+        }).catch(() => showCopyErr(copyBtn));
+      });
+      hdr.innerHTML = `<span class="setup-block-label">${eh(labelText)}</span>${metaText ? `<span class="setup-block-meta">${eh(metaText)}</span>` : ''}`;
+      hdr.appendChild(copyBtn);
+      block.appendChild(hdr);
+      const code = document.createElement('pre');
+      code.className = 'setup-code';
+      code.textContent = codeText;
+      block.appendChild(code);
+      if (noteText) {
+        const note = document.createElement('div');
+        note.className = 'setup-note';
+        note.textContent = noteText;
+        block.appendChild(note);
+      }
+      return block;
+    }
+
+    // Helper: section wrapper
+    function makeSection(iconEmoji, title) {
+      const sec = document.createElement('div');
+      sec.className = 'setup-section';
+      const ttl = document.createElement('div');
+      ttl.className = 'setup-section-title';
+      ttl.innerHTML = `<span class="setup-icon">${iconEmoji}</span>${eh(title)}`;
+      sec.appendChild(ttl);
+      return sec;
+    }
+
+    // 1 — RUNTIME
+    const rtSec = makeSection('🖥️', `${data.runtime.label} — Install`);
+    const rtLinks = document.createElement('div');
+    rtLinks.className = 'setup-link-row';
+    data.runtime.links.forEach(l => {
+      const a = document.createElement('a');
+      a.className = 'setup-link'; a.href = l.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.textContent = l.label;
+      rtLinks.appendChild(a);
+    });
+    rtSec.appendChild(rtLinks);
+    if (data.runtime.note) {
+      const n = document.createElement('div'); n.className='setup-note'; n.textContent=data.runtime.note;
+      rtSec.appendChild(n);
+    }
+    rtSec.appendChild(makeBlock('Verify Installation', null, data.runtime.verify, null));
+    container.appendChild(rtSec);
+
+    // 2 — BUILD TOOL / DEPENDENCY
+    const depSec = makeSection('📦', 'Build Tool & Framework Dependency');
+    if (buildTools.length > 1) {
+      // Toggle
+      const toggle = document.createElement('div');
+      toggle.className = 'setup-build-toggle';
+      buildTools.forEach((bt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'setup-toggle-btn' + (i === 0 ? ' active' : '');
+        btn.textContent = bt;
+        btn.addEventListener('click', () => {
+          toggle.querySelectorAll('.setup-toggle-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          // Swap code block
+          const existing = depSec.querySelector('.setup-block');
+          if (existing) existing.remove();
+          const btData = data[bt];
+          depSec.appendChild(makeBlock(btData.label, null, btData.code, btData.note || null));
+        });
+        toggle.appendChild(btn);
+      });
+      depSec.appendChild(toggle);
+    }
+    const firstBt = data[activeBuild];
+    if (firstBt) depSec.appendChild(makeBlock(firstBt.label, null, firstBt.code, firstBt.note || null));
+    container.appendChild(depSec);
+
+    // 3 — IDE
+    const ideSec = makeSection('💡', 'Recommended IDE');
+    const ideRow = document.createElement('div');
+    ideRow.className = 'setup-link-row';
+    const ideLabel = document.createElement('span');
+    ideLabel.style.cssText='font-size:.8rem;font-weight:600;color:var(--text-2);margin-right:4px;';
+    ideLabel.textContent = data.ide.label + ' — ';
+    ideRow.appendChild(ideLabel);
+    data.ide.links.forEach(l => {
+      const a = document.createElement('a');
+      a.className='setup-link'; a.href=l.url; a.target='_blank'; a.rel='noopener noreferrer';
+      a.textContent=l.label;
+      ideRow.appendChild(a);
+    });
+    ideSec.appendChild(ideRow);
+    container.appendChild(ideSec);
+
+    // 4 — BROWSER DRIVER
+    const brSec = makeSection('🌐', 'Browser Driver / Binary Setup');
+    brSec.appendChild(makeBlock(data.browser.label, null, data.browser.code, data.browser.note || null));
+    container.appendChild(brSec);
+
+    // 5 — VERIFY BUILD TOOL
+    const verSec = makeSection('✅', 'Verify Build Tool');
+    verSec.appendChild(makeBlock('Run in terminal', null, data.verify, null));
+    container.appendChild(verSec);
   }
 
   // -- ELEMENT TYPE CLASSIFIER --

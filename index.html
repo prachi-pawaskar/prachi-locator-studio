@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PraChi — QA Locator Studio</title>
+  <title>PraChi | QA Studio</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23bd93f9'/%3E%3Cstop offset='100%25' stop-color='%23ff79c6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-weight='900' font-size='26' fill='%23282a36'%3EPP%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -60,7 +61,7 @@
     .hero-badge { display:inline-flex; align-items:center; gap:6px; background:var(--accent-soft); color:var(--accent); padding:5px 16px; border-radius:20px; font-size:.75rem; font-weight:700; letter-spacing:.8px; text-transform:uppercase; margin-bottom:1.5rem; border:1px solid var(--accent-glow); }
     .hero h1 { font-size:clamp(2rem,5.5vw,3.4rem); font-weight:900; letter-spacing:-1.5px; line-height:1.1; margin-bottom:1rem; }
     .hero h1 .grad { background:linear-gradient(135deg,#bd93f9 0%,#ff79c6 50%,#8be9fd 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .hero p { font-size:1rem; color:var(--text-2); max-width:500px; margin:0 auto; line-height:1.7; }
+    .hero p { font-size:1rem; color:var(--text-2); max-width:620px; margin:0 auto; line-height:1.7; }
 
     /* MAIN */
     main { position:relative; z-index:1; max-width:920px; margin:0 auto; padding:0 1.25rem 5rem; }
@@ -74,6 +75,7 @@
     .fw-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
     .fw-btn { padding:14px 12px; border:2px solid var(--border); border-radius:var(--r-sm); background:var(--surface-2); color:var(--text-2); cursor:pointer; font-family:'Outfit',sans-serif; font-size:.95rem; font-weight:700; transition:all var(--t); display:flex; flex-direction:column; align-items:center; gap:5px; }
     .fw-btn .fw-icon { width:36px; height:36px; display:block; }
+    .fw-version { font-size:.62rem; font-weight:600; color:var(--text-muted); letter-spacing:.2px; margin-top:1px; }
     .fw-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
     .fw-btn.active { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
     .fw-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
@@ -243,6 +245,20 @@
     .action-tip { font-size:.72rem; color:var(--text-muted); margin-top:6px; font-style:italic; }
     .el-type-badge { display:inline-flex; align-items:center; gap:5px; background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent-glow); padding:3px 10px; border-radius:20px; font-size:.7rem; font-weight:700; margin-bottom:1rem; }
 
+    /* QUICK START */
+    .qs-wrap { position:relative; }
+    .qs-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.9rem; flex-wrap:wrap; gap:8px; }
+    .qs-title { font-size:.82rem; font-weight:800; color:var(--text); }
+    .qs-meta { font-size:.72rem; color:var(--text-muted); font-weight:600; }
+    .qs-copy-btn { background:var(--accent); color:#fff; border:none; border-radius:var(--r-xs); padding:6px 16px; font-family:'Outfit',sans-serif; font-size:.78rem; font-weight:700; cursor:pointer; transition:all var(--t); display:flex; align-items:center; gap:6px; }
+    .qs-copy-btn:hover { background:var(--accent-h); transform:translateY(-1px); }
+    .qs-copy-btn.copied { background:var(--green); }
+    .qs-copy-btn.copy-err { background:var(--red); }
+    .qs-copy-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    .qs-code { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-sm); padding:1.2rem 1.3rem; font-family:'JetBrains Mono',monospace; font-size:.76rem; line-height:1.75; color:var(--text); white-space:pre; overflow-x:auto; tab-size:4; }
+    .qs-comment { color:var(--text-muted); font-style:italic; }
+    .qs-section-note { font-size:.72rem; color:var(--text-muted); margin-top:.8rem; font-style:italic; display:flex; align-items:center; gap:6px; }
+
     /* TOAST */
     #toast { position:fixed; bottom:1.5rem; right:1.5rem; background:var(--text); color:var(--bg); padding:11px 18px; border-radius:var(--r-sm); font-size:.84rem; font-weight:700; box-shadow:var(--shadow-lg); transform:translateY(80px) scale(.95); opacity:0; transition:all .35s cubic-bezier(.34,1.56,.64,1); z-index:999; pointer-events:none; display:flex; align-items:center; gap:8px; }
     #toast.show { transform:translateY(0) scale(1); opacity:1; }
@@ -273,7 +289,7 @@
     <div class="logo-mark" aria-hidden="true">PP</div>
     <div>
       <div class="logo-name"><em>PraChi</em></div>
-      <div class="logo-tagline">QA Architect · Automation Simplified</div>
+      <div class="logo-tagline">QA Studio · Automation Simplified</div>
     </div>
   </a>
   <div class="nav-right">
@@ -285,9 +301,9 @@
 
 <!-- HERO -->
 <section class="hero" aria-label="Page intro">
-  <div class="hero-badge">⚡ QA Locator Studio</div>
-  <h1>Generate <span class="grad">perfect locators</span><br/>in seconds</h1>
-  <p>Paste a single element or upload a full page DOM — get ranked, ready-to-use Selenium, Playwright &amp; Cypress locators across all supported languages.</p>
+  <div class="hero-badge">⚡ QA Element Locator Studio</div>
+  <h1>Locate. Act. Test.<br/><span class="grad">All in one place.</span></h1>
+  <p>Drop any HTML element or upload a full page DOM — PraChi's QA Element Locator Studio instantly generates ranked locators, smart element actions, and ready-to-run test scripts across Selenium, Playwright &amp; Cypress in <strong>10 language combinations</strong>. Built for QA Engineers who move fast.</p>
 </section>
 
 <!-- MAIN -->
@@ -298,16 +314,18 @@
     <div class="section-label" id="fw-label">Step 1 — Choose Framework</div>
     <div class="fw-grid" id="fwGrid" role="radiogroup" aria-label="Testing framework">
       <button class="fw-btn active" data-fw="selenium"   role="radio" aria-checked="true"  tabindex="0">
-        <!-- Selenium: dark circle with bold green S -->
+        <!-- Selenium: dark circle with bold green Se -->
         <svg class="fw-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
           <circle cx="32" cy="32" r="32" fill="#1B1E2E"/>
           <text x="32" y="45" text-anchor="middle" font-family="Georgia,serif" font-weight="900" font-size="28" fill="#43B02A">Se</text>
         </svg>
         Selenium
+        <span class="fw-version">v4.41.0</span>
       </button>
       <button class="fw-btn" data-fw="playwright" role="radio" aria-checked="false" tabindex="-1">
         <span class="fw-icon" style="font-size:2.1rem;display:flex;align-items:center;justify-content:center;">🎭</span>
         Playwright
+        <span class="fw-version">v1.58.2</span>
       </button>
       <button class="fw-btn" data-fw="cypress" role="radio" aria-checked="false" tabindex="-1">
         <!-- Cypress: dark circle with C shape -->
@@ -318,6 +336,7 @@
           <circle cx="46" cy="42" r="3.5" fill="#69D3A7"/>
         </svg>
         Cypress
+        <span class="fw-version">v15.12.0</span>
       </button>
     </div>
   </div>
@@ -438,6 +457,7 @@
       <div class="output-tabs" role="tablist" aria-label="Output view">
         <button class="output-tab active" id="out-tab-locators" role="tab" aria-selected="true">📍 Locators</button>
         <button class="output-tab" id="out-tab-actions" role="tab" aria-selected="false">⚡ Actions</button>
+        <button class="output-tab" id="out-tab-quickstart" role="tab" aria-selected="false">🚀 Quick Start</button>
       </div>
       <div id="out-panel-locators">
         <div class="locator-list" id="locatorList"></div>
@@ -445,14 +465,17 @@
       <div id="out-panel-actions" class="hidden">
         <div id="actionsList"></div>
       </div>
+      <div id="out-panel-quickstart" class="hidden">
+        <div id="quickStartContent"></div>
+      </div>
     </div>
   </div>
 
 </main>
 
 <footer>
-  <strong>PraChi</strong> · QA Architect · Automation Simplified &nbsp;·&nbsp;
-  All locators generated client-side — no data leaves your browser.
+  <strong>PraChi's</strong> · QA Studio · Automation Simplified &nbsp;·&nbsp;
+  <br/>Generated client-side — No data leaves your browser — Best for Privacy
 </footer>
 
 <div id="toast" role="status" aria-live="polite" aria-atomic="true">
@@ -513,13 +536,25 @@
       else if(tag==='table') role='table';
       else if(tag==='li') role='listitem';
     }
+    // Extract first real option text + value from select elements
+    const firstOptionText  = (tag === 'select' && el.options && el.options.length > 0)
+      ? (el.options[0].text || '').trim() : null;
+    const firstOptionValue = (tag === 'select' && el.options && el.options.length > 0)
+      ? (el.options[0].value || '').trim() : null;
+    // Also try parsing child <option> elements via innerHTML (for pasted HTML)
+    const optionEls = [...(el.querySelectorAll ? el.querySelectorAll('option') : [])];
+    const parsedOptionText  = firstOptionText  || (optionEls[0] ? optionEls[0].textContent.trim() : null);
+    const parsedOptionValue = firstOptionValue || (optionEls[0] ? (optionEls[0].getAttribute('value') || optionEls[0].textContent.trim()) : null);
+
     return {
       tag,type,role,classes,stableClass,dataAttrs,testAttrs,
       id:el.getAttribute('id'), name:el.getAttribute('name'),
       placeholder:el.getAttribute('placeholder'), ariaLabel:el.getAttribute('aria-label'),
       value:el.getAttribute('value'), title:el.getAttribute('title'),
       href:el.getAttribute('href'), alt:el.getAttribute('alt'),
-      text:el.textContent.trim()
+      text:el.textContent.trim(),
+      firstOptionText:  parsedOptionText  || null,
+      firstOptionValue: parsedOptionValue || null
     };
   }
 
@@ -535,16 +570,23 @@
   }
 
   function xp(p){
-    if(p.id) return `//${p.tag}[@id="${p.id}"]`;
-    if(p.name) return `//${p.tag}[@name="${p.name}"]`;
-    if(p.placeholder) return `//${p.tag}[@placeholder="${p.placeholder}"]`;
-    if(p.ariaLabel) return `//${p.tag}[@aria-label="${p.ariaLabel}"]`;
-    if(p.text&&p.text.length<60) return `//${p.tag}[normalize-space()="${p.text}"]`;
+    if(p.id) return `//${p.tag}[@id="${escXPath(p.id)}"]`;
+    if(p.name) return `//${p.tag}[@name="${escXPath(p.name)}"]`;
+    if(p.placeholder) return `//${p.tag}[@placeholder="${escXPath(p.placeholder)}"]`;
+    if(p.ariaLabel) return `//${p.tag}[@aria-label="${escXPath(p.ariaLabel)}"]`;
+    if(p.text&&p.text.length<60) return `//${p.tag}[normalize-space()="${escXPath(p.text)}"]`;
     if(p.stableClass) return `//${p.tag}[contains(@class,"${p.stableClass}")]`;
     return `//`+p.tag;
   }
 
   function eh(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  // Escape text for embedding inside single-quoted JS/TS strings in generated code
+  function escSingle(s){return s?s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"):'';}
+  // Escape text for embedding inside double-quoted strings
+  function escDouble(s){return s?s.replace(/\\/g,'\\\\').replace(/"/g,'\\"'):'';}
+  // Escape text for XPath string values
+  function escXPath(s){return s?s.replace(/"/g,'&quot;'):'';}
 
   // -- LOCATOR DEFINITIONS --
   const LD = {
@@ -573,7 +615,7 @@
       {id:'pw_ph',label:'getByPlaceholder',tip:'Good for inputs without explicit labels — placeholder is user-visible and meaningful.',avail:p=>!!p.placeholder,
         code:(p,l)=>({JavaScript:`await page.getByPlaceholder('${p.placeholder}');`,TypeScript:`await page.getByPlaceholder('${p.placeholder}');`,Python:`page.get_by_placeholder("${p.placeholder}")`,Java:`page.getByPlaceholder("${p.placeholder}")`,['C#']:`await page.GetByPlaceholder("${p.placeholder}");`})[l]},
       {id:'pw_text',label:'getByText',tip:'Ideal for buttons & links — connects test to real user-facing text.',avail:p=>!!(p.text&&p.text.length>0&&p.text.length<100),
-        code:(p,l)=>({JavaScript:`await page.getByText('${p.text}');`,TypeScript:`await page.getByText('${p.text}');`,Python:`page.get_by_text("${p.text}")`,Java:`page.getByText("${p.text}")`,['C#']:`await page.GetByText("${p.text}");`})[l]},
+        code:(p,l)=>{const t=escSingle(p.text),td=escDouble(p.text);return({JavaScript:`await page.getByText('${t}');`,TypeScript:`await page.getByText('${t}');`,Python:`page.get_by_text("${td}")`,Java:`page.getByText("${td}")`,['C#']:`await page.GetByText("${td}");`})[l];}},
       {id:'pw_tid',label:'getByTestId',tip:'Stable & explicit — top-tier choice when a test attribute exists.',avail:p=>p.testAttrs.length>0&&!!p.testAttrs[0].value,
         code:(p,l)=>({JavaScript:`await page.getByTestId('${p.testAttrs[0].value}');`,TypeScript:`await page.getByTestId('${p.testAttrs[0].value}');`,Python:`page.get_by_test_id("${p.testAttrs[0].value}")`,Java:`page.getByTestId("${p.testAttrs[0].value}")`,['C#']:`await page.GetByTestId("${p.testAttrs[0].value}");`})[l]},
       {id:'pw_alt',label:'getByAltText',tip:'For images — alt text is accessible and usually stable.',avail:p=>!!p.alt,
@@ -589,7 +631,7 @@
       {id:'cy_id',label:'cy.get (ID)',tip:'Reliable if IDs are stable — be cautious with auto-generated IDs.',avail:p=>!!p.id,code:(p,l)=>`cy.get('#${CSS.escape(p.id)}');`},
       {id:'cy_name',label:'cy.get (Name)',tip:'Good for form fields — name attribute is stable.',avail:p=>!!p.name,code:(p,l)=>`cy.get('[name="${p.name}"]');`},
       {id:'cy_ph',label:'cy.get (Placeholder)',tip:'Use with caution — placeholder text may change with copy/UX updates.',avail:p=>!!p.placeholder,code:(p,l)=>`cy.get('[placeholder="${p.placeholder}"]');`},
-      {id:'cy_txt',label:'cy.contains (Text)',tip:'Natural for buttons & links — ties test to visible user-facing text.',avail:p=>!!(p.text&&p.text.length>0&&p.text.length<100),code:(p,l)=>`cy.contains('${p.text}');`},
+      {id:'cy_txt',label:'cy.contains (Text)',tip:'Natural for buttons & links — ties test to visible user-facing text.',avail:p=>!!(p.text&&p.text.length>0&&p.text.length<100),code:(p,l)=>`cy.contains('${escSingle(p.text)}');`},
       {id:'cy_aria',label:'cy.get (Aria Label)',tip:'Accessibility-aware selector — robust when aria-label is consistently set.',avail:p=>!!p.ariaLabel,code:(p,l)=>`cy.get('[aria-label="${p.ariaLabel}"]');`},
       {id:'cy_cls',label:'cy.get (Class)',tip:'Last resort — class names change frequently with component/styling updates.',avail:p=>!!p.stableClass,code:(p,l)=>`cy.get('.${p.stableClass}');`},
       {id:'cy_css',label:'cy.get (CSS Selector)',tip:'Versatile fallback — combine tag and attribute for better specificity.',avail:p=>true,code:(p,l)=>`cy.get('${cssq(p)}');`}
@@ -647,12 +689,13 @@
     section.classList.add('show');
     section.scrollIntoView({behavior:'smooth',block:'nearest'});
     renderActions(props);
+    renderQuickStart(props);
   }
 
   // -- OUTPUT TABS --
   function setOutputTab(tab){
     state.outputTab=tab;
-    ['locators','actions'].forEach(t=>{
+    ['locators','actions','quickstart'].forEach(t=>{
       document.getElementById('out-tab-'+t).classList.toggle('active',t===tab);
       document.getElementById('out-tab-'+t).setAttribute('aria-selected',t===tab);
       document.getElementById('out-panel-'+t).classList.toggle('hidden',t!==tab);
@@ -660,6 +703,434 @@
   }
   document.getElementById('out-tab-locators').addEventListener('click',()=>setOutputTab('locators'));
   document.getElementById('out-tab-actions').addEventListener('click',()=>setOutputTab('actions'));
+  document.getElementById('out-tab-quickstart').addEventListener('click',()=>setOutputTab('quickstart'));
+
+  // -- QUICK START SNIPPETS --
+  function buildQuickStartSnippet(props, fw, lang) {
+    const loc   = getBestLocatorCode(props, fw, lang);
+    const locRaw= getBestLocatorRaw(props, fw);
+    const action= getSmartAction(props, fw, lang);
+    const assert= getSmartAssert(props, fw, lang);
+    const url   = 'https://your-app-url.com';
+
+    const C = (s) => s; // passthrough — we'll tag comments in the HTML render
+
+    if (fw === 'selenium') {
+      if (lang === 'Java') return `import org.openqa.selenium.By;
+  import org.openqa.selenium.WebDriver;
+  import org.openqa.selenium.WebElement;
+  import org.openqa.selenium.chrome.ChromeDriver;
+  // import org.openqa.selenium.firefox.FirefoxDriver;
+  // import org.openqa.selenium.edge.EdgeDriver;
+  // import org.openqa.selenium.safari.SafariDriver;
+
+  public class QuickStartTest {
+      public static void main(String[] args) {
+
+          // 1. Start browser (Chrome — uncomment others to switch)
+          WebDriver driver = new ChromeDriver();
+          // WebDriver driver = new FirefoxDriver();
+          // WebDriver driver = new EdgeDriver();
+          // WebDriver driver = new SafariDriver();
+
+          // 2. Navigate to URL
+          driver.get("${url}");
+          driver.manage().window().maximize();
+
+          // 3. Locate element (best locator for your element)
+          WebElement element = driver.findElement(${loc});
+
+          // 4. Assert element is visible
+          assert element.isDisplayed() : "Element should be visible";
+
+          // 5. Perform action
+          ${action}
+
+          // 6. Close browser
+          driver.quit();
+      }
+  }`;
+
+      if (lang === 'Python') return `from selenium import webdriver
+  from selenium.webdriver.common.by import By
+  # from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxDriver
+  # from selenium.webdriver.edge.webdriver import WebDriver as EdgeDriver
+
+  # 1. Start browser (Chrome — uncomment others to switch)
+  driver = webdriver.Chrome()
+  # driver = webdriver.Firefox()
+  # driver = webdriver.Edge()
+  # driver = webdriver.Safari()
+
+  # 2. Navigate to URL
+  driver.get("${url}")
+  driver.maximize_window()
+
+  # 3. Locate element (best locator for your element)
+  element = driver.find_element(${loc})
+
+  # 4. Assert element is visible
+  assert element.is_displayed(), "Element should be visible"
+
+  # 5. Perform action
+  ${action}
+
+  # 6. Close browser
+  driver.quit()`;
+
+      if (lang === 'C#') return `using OpenQA.Selenium;
+  using OpenQA.Selenium.Chrome;
+  // using OpenQA.Selenium.Firefox;
+  // using OpenQA.Selenium.Edge;
+
+  // 1. Start browser (Chrome — uncomment others to switch)
+  IWebDriver driver = new ChromeDriver();
+  // IWebDriver driver = new FirefoxDriver();
+  // IWebDriver driver = new EdgeDriver();
+
+  // 2. Navigate to URL
+  driver.Navigate().GoToUrl("${url}");
+  driver.Manage().Window.Maximize();
+
+  // 3. Locate element (best locator for your element)
+  IWebElement element = driver.FindElement(${loc});
+
+  // 4. Assert element is visible
+  System.Diagnostics.Debug.Assert(element.Displayed, "Element should be visible");
+
+  // 5. Perform action
+  ${action}
+
+  // 6. Close browser
+  driver.Quit();`;
+
+      if (lang === 'JavaScript') return `const { Builder, By, until } = require('selenium-webdriver');
+  const chrome = require('selenium-webdriver/chrome');
+  // const firefox = require('selenium-webdriver/firefox');
+  // const edge    = require('selenium-webdriver/edge');
+
+  (async function quickStart() {
+
+      // 1. Start browser (Chrome — uncomment others to switch)
+      const driver = await new Builder().forBrowser('chrome').build();
+      // const driver = await new Builder().forBrowser('firefox').build();
+      // const driver = await new Builder().forBrowser('MicrosoftEdge').build();
+
+      try {
+          // 2. Navigate to URL
+          await driver.get('${url}');
+
+          // 3. Locate element (best locator for your element)
+          const element = await driver.findElement(${loc});
+
+          // 4. Assert element is visible
+          const visible = await element.isDisplayed();
+          console.assert(visible, 'Element should be visible');
+
+          // 5. Perform action
+          ${action}
+
+      } finally {
+          // 6. Close browser
+          await driver.quit();
+      }
+  })();`;
+
+      if (lang === 'Ruby') return `require 'selenium-webdriver'
+
+  # 1. Start browser (Chrome — uncomment others to switch)
+  driver = Selenium::WebDriver.for :chrome
+  # driver = Selenium::WebDriver.for :firefox
+  # driver = Selenium::WebDriver.for :edge
+  # driver = Selenium::WebDriver.for :safari
+
+  # 2. Navigate to URL
+  driver.navigate.to '${url}'
+  driver.manage.window.maximize
+
+  # 3. Locate element (best locator for your element)
+  element = driver.find_element(${loc})
+
+  # 4. Assert element is visible
+  raise 'Element should be visible' unless element.displayed?
+
+  # 5. Perform action
+  ${action}
+
+  # 6. Close browser
+  driver.quit`;
+    }
+
+    if (fw === 'playwright') {
+      const isTs = lang === 'TypeScript';
+      if (lang === 'JavaScript' || isTs) return `${isTs
+    ? "import { chromium, firefox, webkit } from 'playwright';"
+    : "const { chromium, firefox, webkit } = require('playwright');"}
+  // ${isTs ? "const { chromium, firefox, webkit } = require('playwright'); // CommonJS alternative" : "import { chromium, firefox, webkit } from 'playwright'; // ESM alternative"}
+
+  (async () => {
+      // 1. Start browser (Chromium — uncomment others to switch)
+      const browser = await chromium.launch({ headless: false });
+      // const browser = await firefox.launch({ headless: false });
+      // const browser = await webkit.launch({ headless: false });
+
+      const context = await browser.newContext();
+      const page    = await context.newPage();
+
+      // 2. Navigate to URL
+      await page.goto('${url}');
+
+      // 3. Locate element (best locator for your element)
+      const locator = ${loc};
+
+      // 4. Assert element is visible
+      await expect(locator).toBeVisible();
+
+      // 5. Perform action
+      ${action}
+
+      // 6. Close browser
+      await browser.close();
+  })();`;
+
+      if (lang === 'Python') return `from playwright.sync_api import sync_playwright, expect
+
+  with sync_playwright() as p:
+
+      # 1. Start browser (Chromium — uncomment others to switch)
+      browser = p.chromium.launch(headless=False)
+      # browser = p.firefox.launch(headless=False)
+      # browser = p.webkit.launch(headless=False)
+
+      context = browser.new_context()
+      page    = context.new_page()
+
+      # 2. Navigate to URL
+      page.goto("${url}")
+
+      # 3. Locate element (best locator for your element)
+      locator = ${loc}
+
+      # 4. Assert element is visible
+      expect(locator).to_be_visible()
+
+      # 5. Perform action
+      ${action}
+
+      # 6. Close browser
+      browser.close()`;
+
+      if (lang === 'Java') return `import com.microsoft.playwright.*;
+  import com.microsoft.playwright.options.*;
+
+  public class QuickStartTest {
+      public static void main(String[] args) {
+          try (Playwright playwright = Playwright.create()) {
+
+              // 1. Start browser (Chromium — uncomment others to switch)
+              Browser browser = playwright.chromium().launch(
+                  new BrowserType.LaunchOptions().setHeadless(false));
+              // Browser browser = playwright.firefox().launch(...);
+              // Browser browser = playwright.webkit().launch(...);
+
+              BrowserContext context = browser.newContext();
+              Page page = context.newPage();
+
+              // 2. Navigate to URL
+              page.navigate("${url}");
+
+              // 3. Locate element (best locator for your element)
+              Locator locator = ${loc};
+
+              // 4. Assert element is visible
+              assertThat(locator).isVisible();
+
+              // 5. Perform action
+              ${action}
+
+              // 6. Close browser
+              browser.close();
+          }
+      }
+  }`;
+
+      if (lang === 'C#') return `using Microsoft.Playwright;
+
+  var playwright = await Playwright.CreateAsync();
+
+  // 1. Start browser (Chromium — uncomment others to switch)
+  var browser = await playwright.Chromium.LaunchAsync(
+      new BrowserTypeLaunchOptions { Headless = false });
+  // var browser = await playwright.Firefox.LaunchAsync(...);
+  // var browser = await playwright.Webkit.LaunchAsync(...);
+
+  var context = await browser.NewContextAsync();
+  var page    = await context.NewPageAsync();
+
+  // 2. Navigate to URL
+  await page.GotoAsync("${url}");
+
+  // 3. Locate element (best locator for your element)
+  var locator = ${loc};
+
+  // 4. Assert element is visible
+  await Expect(locator).ToBeVisibleAsync();
+
+  // 5. Perform action
+  ${action}
+
+  // 6. Close browser
+  await browser.CloseAsync();`;
+    }
+
+    if (fw === 'cypress') {
+      const isTs = lang === 'TypeScript';
+      return `${isTs ? '// cypress.config.ts — ensure specPattern includes **/*.cy.ts\n\n' : '// cypress.config.js — ensure specPattern includes **/*.cy.js\n\n'}describe('Quick Start Test Suite', () => {
+
+      // Cypress manages browser — configure in cypress.config:
+      // browser: 'chrome' | 'firefox' | 'edge' | 'electron' (default)
+
+      beforeEach(() => {
+          // 2. Navigate to URL
+          cy.visit('${url}');
+      });
+
+      it('should interact with element', () => {
+
+          // 3. Locate element (best locator for your element)
+          const el = ${loc};
+
+          // 4. Assert element is visible
+          el.should('be.visible');
+
+          // 5. Perform action
+          ${action}
+      });
+  });`;
+    }
+
+    return '// Snippet not available for this combination.';
+  }
+
+  function getBestLocatorCode(props, fw, lang) {
+    const defs = LD[fw].filter(d => d.avail(props));
+    if (!defs.length) return '/* no locator */';
+    return defs[0].code(props, lang);
+  }
+
+  function getBestLocatorRaw(props, fw) {
+    const defs = LD[fw].filter(d => d.avail(props));
+    return defs.length ? defs[0] : null;
+  }
+
+  function getSmartAction(props, fw, lang) {
+    const t = props.tag, tp = props.type || '';
+    const isInput    = t === 'input' && !['checkbox','radio','submit','button','reset'].includes(tp);
+    const isTextarea = t === 'textarea';
+    const isBtn      = t === 'button' || ['submit','button','reset'].includes(tp);
+    const isSelect   = t === 'select';
+    const isCheck    = tp === 'checkbox' || tp === 'radio';
+    const isLink     = t === 'a';
+    const val = '/* your text here */';
+
+    if (fw === 'selenium') {
+      const E = { Java:'element', Python:'element', 'C#':'element', JavaScript:'await element', Ruby:'element' };
+      const e = E[lang] || 'element';
+      if (isInput || isTextarea) {
+        const m = { Java:`element.sendKeys("${val}");`, Python:`element.send_keys("${val}")`, 'C#':`element.SendKeys("${val}");`, JavaScript:`await element.sendKeys("${val}");`, Ruby:`element.send_keys("${val}")` };
+        return m[lang] || `element.sendKeys("${val}");`;
+      }
+      if (isSelect) {
+        const m = { Java:`new Select(element).selectByIndex(0);`, Python:`from selenium.webdriver.support.ui import Select\nSelect(element).select_by_index(0)`, 'C#':`new SelectElement(element).SelectByIndex(0);`, JavaScript:`await element.sendKeys('first-option');`, Ruby:`element.find('option:first-child').click` };
+        return m[lang] || `new Select(element).selectByIndex(0);`;
+      }
+      if (isCheck) {
+        const m = { Java:`if (!element.isSelected()) element.click();`, Python:`if not element.is_selected(): element.click()`, 'C#':`if (!element.Selected) element.Click();`, JavaScript:`if (!await element.isSelected()) await element.click();`, Ruby:`element.click unless element.selected?` };
+        return m[lang] || `element.click();`;
+      }
+      const m = { Java:`element.click();`, Python:`element.click()`, 'C#':`element.Click();`, JavaScript:`await element.click();`, Ruby:`element.click` };
+      return m[lang] || `element.click();`;
+    }
+
+    if (fw === 'playwright') {
+      if (isInput || isTextarea) return ({ JavaScript:`await locator.fill('${val}');`, TypeScript:`await locator.fill('${val}');`, Python:`locator.fill("${val}")`, Java:`locator.fill("${val}");`, 'C#':`await locator.FillAsync("${val}");` })[lang] || `await locator.fill('${val}');`;
+      if (isSelect) return ({ JavaScript:`await locator.selectOption({ index: 0 });`, TypeScript:`await locator.selectOption({ index: 0 });`, Python:`locator.select_option(index=0)`, Java:`locator.selectOption(new SelectOption().setIndex(0));`, 'C#':`await locator.SelectOptionAsync(new SelectOptionValue { Index = 0 });` })[lang] || `await locator.selectOption({ index: 0 });`;
+      if (isCheck) return ({ JavaScript:`await locator.check();`, TypeScript:`await locator.check();`, Python:`locator.check()`, Java:`locator.check();`, 'C#':`await locator.CheckAsync();` })[lang] || `await locator.check();`;
+      return ({ JavaScript:`await locator.click();`, TypeScript:`await locator.click();`, Python:`locator.click()`, Java:`locator.click();`, 'C#':`await locator.ClickAsync();` })[lang] || `await locator.click();`;
+    }
+
+    if (fw === 'cypress') {
+      if (isInput || isTextarea) return `el.type('${val}');`;
+      if (isSelect)              return `el.select(0);`;
+      if (isCheck)               return `el.check();`;
+      return `el.click();`;
+    }
+
+    return '// perform action';
+  }
+
+  function getSmartAssert(props, fw, lang) {
+    return ''; // assertions are inline in the snippet template
+  }
+
+  // -- RENDER QUICK START --
+  function renderQuickStart(props) {
+    const fw   = state.framework;
+    const lang = state.language;
+    const container = document.getElementById('quickStartContent');
+    container.innerHTML = '';
+
+    const snippet = buildQuickStartSnippet(props, fw, lang);
+    const bestDef = getBestLocatorRaw(props, fw);
+    const bestLabel = bestDef ? bestDef.label : 'CSS Selector';
+
+    // Header row
+    const header = document.createElement('div');
+    header.className = 'qs-header';
+    header.innerHTML = `
+      <div>
+        <div class="qs-title">${FRAMEWORKS[fw].name} + ${lang} — Full Test Script</div>
+        <div class="qs-meta">Using best locator: ${bestLabel}</div>
+      </div>
+      <button class="qs-copy-btn" id="qsCopyBtn">⎘ <span class="qs-cl">Copy All</span></button>`;
+    container.appendChild(header);
+
+    // Code block
+    const pre = document.createElement('pre');
+    pre.className = 'qs-code';
+    // Highlight comment lines
+    const highlighted = snippet.split('\n').map(line => {
+      const trimmed = line.trimStart();
+      if (trimmed.startsWith('//') || trimmed.startsWith('#')) {
+        return `<span class="qs-comment">${eh(line)}</span>`;
+      }
+      return eh(line);
+    }).join('\n');
+    pre.innerHTML = highlighted;
+    container.appendChild(pre);
+
+    // Note
+    const note = document.createElement('div');
+    note.className = 'qs-section-note';
+    note.innerHTML = `💡 Replace <strong>${eh('https://your-app-url.com')}</strong> with your actual URL. The locator and action are auto-filled from your element.`;
+    container.appendChild(note);
+
+    // Copy handler
+    const copyBtn = document.getElementById('qsCopyBtn');
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(snippet).then(() => {
+        copyBtn.classList.add('copied');
+        copyBtn.querySelector('.qs-cl').textContent = 'Copied!';
+        showToast('Quick Start script copied!');
+        setTimeout(() => { copyBtn.classList.remove('copied'); copyBtn.querySelector('.qs-cl').textContent = 'Copy All'; }, 2000);
+      }).catch(() => {
+        copyBtn.classList.add('copy-err');
+        copyBtn.querySelector('.qs-cl').textContent = 'Failed!';
+        showErrToast('Copy failed — please select and copy the code manually.');
+        setTimeout(() => { copyBtn.classList.remove('copy-err'); copyBtn.querySelector('.qs-cl').textContent = 'Copy All'; }, 2500);
+      });
+    });
+  }
 
   // -- ELEMENT TYPE CLASSIFIER --
   function getElType(props){
@@ -704,10 +1175,11 @@
     {id:'type',category:'Interaction',label:'Type / Send Keys',tip:'Types text into the input field.',
      elTypes:['textinput','textarea'],
      code:(p,fw,l)=>{
-      const ph=p.placeholder||'your text';
-      if(fw==='selenium') return ({Java:`element.sendKeys("${ph}");`,Python:`element.send_keys("${ph}")`,['C#']:`element.SendKeys("${ph}");`,JavaScript:`await element.sendKeys("${ph}");`,Ruby:`element.send_keys("${ph}")`})[l];
-      if(fw==='playwright') return ({JavaScript:`await locator.fill('${ph}');`,TypeScript:`await locator.fill('${ph}');`,Python:`locator.fill("${ph}")`,Java:`locator.fill("${ph}");`,['C#']:`await locator.FillAsync("${ph}");`})[l];
-      return `.type('${ph}')`;
+      const ph = '/* your text here */';
+      const phS = escSingle(ph), phD = escDouble(ph);
+      if(fw==='selenium') return ({Java:`element.sendKeys("${phD}");`,Python:`element.send_keys("${phD}")`,['C#']:`element.SendKeys("${phD}");`,JavaScript:`await element.sendKeys("${phS}");`,Ruby:`element.send_keys("${phD}")`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.fill('${phS}');`,TypeScript:`await locator.fill('${phS}');`,Python:`locator.fill("${phD}")`,Java:`locator.fill("${phD}");`,['C#']:`await locator.FillAsync("${phD}");`})[l];
+      return `.type('${phS}')`;
     }},
     {id:'clear',category:'Interaction',label:'Clear',tip:'Clears the current value from the input field.',
      elTypes:['textinput','textarea'],
@@ -726,16 +1198,20 @@
     {id:'select_txt',category:'Interaction',label:'Select By Visible Text',tip:'Selects a dropdown option by its displayed text.',
      elTypes:['select'],
      code:(p,fw,l)=>{
-      if(fw==='selenium') return ({Java:`new Select(element).selectByVisibleText("Option Text");`,Python:`Select(element).select_by_visible_text("Option Text")`,['C#']:`new SelectElement(element).SelectByText("Option Text");`,JavaScript:`await element.selectByVisibleText("Option Text");`,Ruby:`element.find("option[text()='Option Text']").select_option`})[l];
-      if(fw==='playwright') return ({JavaScript:`await locator.selectOption({ label: 'Option Text' });`,TypeScript:`await locator.selectOption({ label: 'Option Text' });`,Python:`locator.select_option(label="Option Text")`,Java:`locator.selectOption(new SelectOption().setLabel("Option Text"));`,['C#']:`await locator.SelectOptionAsync(new SelectOptionValue { Label = "Option Text" });`})[l];
-      return `.select('Option Text')`;
+      const opt = p.firstOptionText || '/* option visible text */';
+      const optD = escDouble(opt), optS = escSingle(opt);
+      if(fw==='selenium') return ({Java:`new Select(element).selectByVisibleText("${optD}");`,Python:`Select(element).select_by_visible_text("${optD}")`,['C#']:`new SelectElement(element).SelectByText("${optD}");`,JavaScript:`await element.selectByVisibleText("${optS}");`,Ruby:`element.find("option[text()='${optS}']").select_option`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.selectOption({ label: '${optS}' });`,TypeScript:`await locator.selectOption({ label: '${optS}' });`,Python:`locator.select_option(label="${optD}")`,Java:`locator.selectOption(new SelectOption().setLabel("${optD}"));`,['C#']:`await locator.SelectOptionAsync(new SelectOptionValue { Label = "${optD}" });`})[l];
+      return `.select('${optS}')`;
     }},
     {id:'select_val',category:'Interaction',label:'Select By Value',tip:'Selects a dropdown option by its value attribute.',
      elTypes:['select'],
      code:(p,fw,l)=>{
-      if(fw==='selenium') return ({Java:`new Select(element).selectByValue("optionValue");`,Python:`Select(element).select_by_value("optionValue")`,['C#']:`new SelectElement(element).SelectByValue("optionValue");`,JavaScript:`await element.selectByValue("optionValue");`,Ruby:`element.find("option[@value='optionValue']").select_option`})[l];
-      if(fw==='playwright') return ({JavaScript:`await locator.selectOption('optionValue');`,TypeScript:`await locator.selectOption('optionValue');`,Python:`locator.select_option("optionValue")`,Java:`locator.selectOption("optionValue");`,['C#']:`await locator.SelectOptionAsync("optionValue");`})[l];
-      return `.select('optionValue')`;
+      const val = p.firstOptionValue || '/* option value attr */';
+      const valD = escDouble(val), valS = escSingle(val);
+      if(fw==='selenium') return ({Java:`new Select(element).selectByValue("${valD}");`,Python:`Select(element).select_by_value("${valD}")`,['C#']:`new SelectElement(element).SelectByValue("${valD}");`,JavaScript:`await element.selectByValue("${valS}");`,Ruby:`element.find("option[@value='${valS}']").select_option`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.selectOption('${valS}');`,TypeScript:`await locator.selectOption('${valS}');`,Python:`locator.select_option("${valD}")`,Java:`locator.selectOption("${valD}");`,['C#']:`await locator.SelectOptionAsync("${valD}");`})[l];
+      return `.select('${valS}')`;
     }},
     {id:'select_idx',category:'Interaction',label:'Select By Index',tip:'Selects a dropdown option by its zero-based index.',
      elTypes:['select'],
@@ -965,6 +1441,7 @@
 
   function renderInteractive(q=''){
     const list=document.getElementById('el-list');
+    if(!state.domDoc){list.innerHTML='<div class="empty-state"><span class="es-icon">📂</span><p>Load a DOM first.</p></div>';return;}
     const els=getInteractive(state.domDoc,q);
     document.getElementById('interactive-count').textContent=els.length;
     list.innerHTML='';
@@ -991,6 +1468,7 @@
   /* DOM Tree */
   function renderTree(q=''){
     const c=document.getElementById('tree-container');
+    if(!state.domDoc){c.innerHTML='<div class="empty-state"><span class="es-icon">📂</span><p>Load a DOM first.</p></div>';return;}
     c.innerHTML='';
     const body=state.domDoc.body;
     if(!body){c.innerHTML='<div class="empty-state"><p>No body found.</p></div>';return;}
@@ -1112,6 +1590,7 @@
     document.getElementById('selInd').classList.add('hidden');
     document.getElementById('selIndVal').textContent='';
     state.selectedEl=null;
+    document.getElementById('output-section').classList.remove('show');
   }
 
   /* View switching */
@@ -1152,7 +1631,7 @@
   dz.addEventListener('click',()=>fi.click());
   dz.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fi.click();}});
   dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
-  dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+  dz.addEventListener('dragleave',e=>{if(!dz.contains(e.relatedTarget))dz.classList.remove('drag-over');});
   dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0]);});
   fi.addEventListener('change',()=>{if(fi.files[0])readFile(fi.files[0]);});
 
@@ -1176,7 +1655,10 @@
       document.querySelectorAll('.mode-tab').forEach(b=>{b.classList.toggle('active',b.dataset.mode===m);b.setAttribute('aria-selected',b.dataset.mode===m);});
       document.getElementById('panel-single').classList.toggle('hidden',m!=='single');
       document.getElementById('panel-dom').classList.toggle('hidden',m!=='dom');
+      // Clear stale state from previous mode
       document.getElementById('output-section').classList.remove('show');
+      state.selectedEl=null;
+      hideErr();
     });
   });
 

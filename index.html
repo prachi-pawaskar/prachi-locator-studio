@@ -11,7 +11,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── DRACULA CLASSIC THEME ───────────────────────────────────── */
+    /* -- DRACULA CLASSIC THEME ------------------------------------ */
     :root {
       /* Dracula Light — soft inverted, Dracula-inspired */
       --bg:#f8f8f2; --bg-grid:rgba(189,147,249,0.05);
@@ -174,7 +174,8 @@
     .tree-container { max-height:420px; overflow-y:auto; padding-right:3px; }
     .tree-row { display:flex; align-items:center; gap:5px; padding:3px 6px; border-radius:5px; cursor:pointer; transition:background var(--t); min-height:26px; font-family:'JetBrains Mono',monospace; font-size:.77rem; }
     .tree-row:hover { background:var(--accent-soft); }
-    .tree-row.selected { background:var(--accent-soft); outline:1.5px solid var(--accent); outline-offset:-1px; }
+    .tree-row.tree-match { background:var(--accent-soft); outline:1px solid var(--accent-glow); border-radius:5px; }
+    .tree-match-badge { font-size:.6rem; font-weight:800; text-transform:uppercase; letter-spacing:.5px; background:var(--accent); color:#fff; padding:1px 6px; border-radius:10px; margin-left:4px; vertical-align:middle; }
     .tree-toggle { width:14px; font-size:.55rem; color:var(--text-muted); cursor:pointer; flex-shrink:0; text-align:center; }
     .tree-toggle.leaf { color:transparent; cursor:default; }
     .tree-tag { color:var(--accent); }
@@ -221,9 +222,33 @@
     .loc-card.is-best .loc-tip { color:var(--green-text); }
     [data-theme="dark"] .loc-card.is-best .loc-tip { color:#50fa7b; opacity:.85; }
 
+    /* OUTPUT TABS */
+    .output-tabs { display:flex; border-bottom:1px solid var(--border); margin-bottom:1rem; }
+    .output-tab { padding:8px 18px; border:none; background:transparent; color:var(--text-muted); font-family:'Outfit',sans-serif; font-size:.85rem; font-weight:700; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all var(--t); display:flex; align-items:center; gap:6px; }
+    .output-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+    .output-tab:hover:not(.active) { color:var(--text); }
+    .output-tab:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+    /* ACTION CARDS */
+    .action-category { margin-bottom:1.4rem; }
+    .action-cat-label { font-size:.68rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); margin-bottom:.6rem; display:flex; align-items:center; gap:8px; }
+    .action-cat-label::after { content:''; flex:1; height:1px; background:var(--border); }
+    .action-list-inner { display:flex; flex-direction:column; gap:7px; }
+    .action-card { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--r-sm); padding:12px 14px; cursor:pointer; transition:border-color var(--t),box-shadow var(--t); animation:fadeUp .2s ease both; }
+    .action-card:hover { border-color:var(--accent); box-shadow:var(--shadow-sm); }
+    .action-card:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    .action-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .action-label { font-size:.82rem; font-weight:700; color:var(--text); }
+    .action-code { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-xs); padding:9px 12px; font-family:'JetBrains Mono',monospace; font-size:.78rem; line-height:1.65; color:var(--text); white-space:pre-wrap; word-break:break-all; }
+    .action-tip { font-size:.72rem; color:var(--text-muted); margin-top:6px; font-style:italic; }
+    .el-type-badge { display:inline-flex; align-items:center; gap:5px; background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent-glow); padding:3px 10px; border-radius:20px; font-size:.7rem; font-weight:700; margin-bottom:1rem; }
+
     /* TOAST */
     #toast { position:fixed; bottom:1.5rem; right:1.5rem; background:var(--text); color:var(--bg); padding:11px 18px; border-radius:var(--r-sm); font-size:.84rem; font-weight:700; box-shadow:var(--shadow-lg); transform:translateY(80px) scale(.95); opacity:0; transition:all .35s cubic-bezier(.34,1.56,.64,1); z-index:999; pointer-events:none; display:flex; align-items:center; gap:8px; }
     #toast.show { transform:translateY(0) scale(1); opacity:1; }
+    #errToast { position:fixed; bottom:1.5rem; left:1.5rem; background:var(--red); color:#fff; padding:11px 18px; border-radius:var(--r-sm); font-size:.84rem; font-weight:700; box-shadow:var(--shadow-lg); transform:translateY(80px) scale(.95); opacity:0; transition:all .35s cubic-bezier(.34,1.56,.64,1); z-index:999; pointer-events:none; display:flex; align-items:center; gap:8px; max-width:320px; }
+    #errToast.show { transform:translateY(0) scale(1); opacity:1; }
+    .copy-btn.copy-err { background:var(--red-soft); color:var(--red-text); border-color:var(--red); }
 
     /* FOOTER */
     footer { position:relative; z-index:1; text-align:center; padding:1.75rem 1.5rem; border-top:1px solid var(--border); color:var(--text-muted); font-size:.78rem; }
@@ -314,8 +339,8 @@
     <div class="card" role="group" aria-labelledby="single-input-label">
       <div class="section-label" id="single-input-label">Step 3 — Paste HTML Element</div>
       <textarea id="htmlInput" aria-label="HTML element input"
-        placeholder='Paste a single HTML element&#10;e.g. <input name="username" placeholder="Username" class="oxd-input">'
-        spellcheck="false" autocorrect="off" autocomplete="off"></textarea>
+                placeholder='Paste a single HTML element&#10;e.g. <input name="username" placeholder="Username" class="oxd-input">'
+                spellcheck="false" autocorrect="off" autocomplete="off"></textarea>
       <div class="error-bar" id="errorBar" role="alert" aria-live="polite">
         <span>⚠️</span><span id="errorText"></span>
       </div>
@@ -341,7 +366,7 @@
       <div id="fileChip" class="hidden"></div>
       <div class="or-divider">or paste HTML</div>
       <textarea id="domPasteArea" style="min-height:85px" aria-label="Paste full HTML"
-        placeholder="Paste full page HTML here…" spellcheck="false" autocorrect="off" autocomplete="off"></textarea>
+                placeholder="Paste full page HTML here…" spellcheck="false" autocorrect="off" autocomplete="off"></textarea>
       <div class="error-bar" id="domErrorBar" role="alert" aria-live="polite">
         <span>⚠️</span><span id="domErrorText"></span>
       </div>
@@ -404,523 +429,849 @@
   </div>
 
   <!-- OUTPUT (shared) -->
-  <div id="output-section" role="region" aria-label="Generated locators" aria-live="polite">
+  <div id="output-section" role="region" aria-label="Generated output" aria-live="polite">
     <div class="card">
       <div class="output-header">
-        <div class="output-title" id="outputTitle">Locators</div>
+        <div class="output-title" id="outputTitle">Results</div>
         <div class="output-meta" id="outputMeta"></div>
       </div>
-      <div class="locator-list" id="locatorList"></div>
+      <div class="output-tabs" role="tablist" aria-label="Output view">
+        <button class="output-tab active" id="out-tab-locators" role="tab" aria-selected="true">📍 Locators</button>
+        <button class="output-tab" id="out-tab-actions" role="tab" aria-selected="false">⚡ Actions</button>
+      </div>
+      <div id="out-panel-locators">
+        <div class="locator-list" id="locatorList"></div>
+      </div>
+      <div id="out-panel-actions" class="hidden">
+        <div id="actionsList"></div>
+      </div>
     </div>
   </div>
 
 </main>
 
 <footer>
-  <!-- <strong>PraChi</strong> · QA Architect · Automation Simplified &nbsp;·&nbsp;  -->
-  All locators generated client-side — No data leaves your browser — Best for Privacy
+  <strong>PraChi</strong> · QA Architect · Automation Simplified &nbsp;·&nbsp;
+  All locators generated client-side — no data leaves your browser.
 </footer>
 
 <div id="toast" role="status" aria-live="polite" aria-atomic="true">
   <span>✅</span><span id="toastMsg">Copied!</span>
 </div>
+<div id="errToast" role="alert" aria-live="assertive" aria-atomic="true">
+  <span>❌</span><span id="errToastMsg">Copy failed.</span>
+</div>
 
 <script>
-/* ════════════════════════════════════════
-   DATA
-════════════════════════════════════════ */
-const FRAMEWORKS = {
-  selenium:   { name:'Selenium',   languages:['Java','Python','C#','JavaScript','Ruby'] },
-  playwright: { name:'Playwright', languages:['JavaScript','TypeScript','Python','Java','C#'] },
-  cypress:    { name:'Cypress',    languages:['JavaScript','TypeScript'] }
-};
+  // -- DATA --
+  const FRAMEWORKS = {
+    selenium:   { name:'Selenium',   languages:['Java','Python','C#','JavaScript','Ruby'] },
+    playwright: { name:'Playwright', languages:['JavaScript','TypeScript','Python','Java','C#'] },
+    cypress:    { name:'Cypress',    languages:['JavaScript','TypeScript'] }
+  };
 
-const state = {
-  framework:'selenium', language:'Java',
-  mode:'single',
-  domDoc:null, domHtml:'',
-  domView:'interactive',
-  selectedEl:null
-};
+  const state = {
+    framework:'selenium', language:'Java',
+    mode:'single',
+    domDoc:null, domHtml:'',
+    domView:'interactive',
+    selectedEl:null,
+    outputTab:'locators'
+  };
 
-/* ════════════════════════════════════════
-   PARSE HELPERS
-════════════════════════════════════════ */
-function parseHTMLEl(str) {
-  try {
-    const doc = new DOMParser().parseFromString('<div>'+str.trim()+'</div>','text/html');
-    return doc.querySelector('div').firstElementChild||null;
-  } catch(e){return null;}
-}
+  // -- PARSE HELPERS --
+  function parseHTMLEl(str) {
+    try {
+      const doc = new DOMParser().parseFromString('<div>'+str.trim()+'</div>','text/html');
+      return doc.querySelector('div').firstElementChild||null;
+    } catch(e){return null;}
+  }
 
-function extractProps(el) {
-  const tag=el.tagName.toLowerCase(), type=(el.getAttribute('type')||'').toLowerCase();
-  const classes=(el.getAttribute('class')||'').split(/\s+/).filter(Boolean);
-  const dataAttrs=[],testAttrs=[];
-  for(const a of el.attributes){
-    if(a.name.startsWith('data-')){
-      dataAttrs.push({name:a.name,value:a.value});
-      if(['data-testid','data-test','data-cy','data-qa','data-test-id'].includes(a.name)) testAttrs.push({name:a.name,value:a.value});
+  function extractProps(el) {
+    const tag=el.tagName.toLowerCase(), type=(el.getAttribute('type')||'').toLowerCase();
+    const classes=(el.getAttribute('class')||'').split(/\s+/).filter(Boolean);
+    const dataAttrs=[],testAttrs=[];
+    for(const a of el.attributes){
+      if(a.name.startsWith('data-')){
+        dataAttrs.push({name:a.name,value:a.value});
+        if(['data-testid','data-test','data-cy','data-qa','data-test-id'].includes(a.name)) testAttrs.push({name:a.name,value:a.value});
+      }
+    }
+    const stableClass=classes.find(c=>!/(--(active|hover|focus|selected|disabled)|active|selected|hover|focus|open|show)$/i.test(c))||classes[0]||null;
+    let role=el.getAttribute('role');
+    if(!role){
+      if(tag==='a') role='link';
+      else if(tag==='button'||(tag==='input'&&['button','submit','reset'].includes(type))) role='button';
+      else if(tag==='input'&&type==='checkbox') role='checkbox';
+      else if(tag==='input'&&type==='radio') role='radio';
+      else if(tag==='input'&&type==='search') role='searchbox';
+      else if(tag==='input'||tag==='textarea') role='textbox';
+      else if(tag==='select') role='combobox';
+      else if(tag==='img') role='img';
+      else if(tag==='nav') role='navigation';
+      else if(/^h[1-6]$/.test(tag)) role='heading';
+      else if(tag==='table') role='table';
+      else if(tag==='li') role='listitem';
+    }
+    return {
+      tag,type,role,classes,stableClass,dataAttrs,testAttrs,
+      id:el.getAttribute('id'), name:el.getAttribute('name'),
+      placeholder:el.getAttribute('placeholder'), ariaLabel:el.getAttribute('aria-label'),
+      value:el.getAttribute('value'), title:el.getAttribute('title'),
+      href:el.getAttribute('href'), alt:el.getAttribute('alt'),
+      text:el.textContent.trim()
+    };
+  }
+
+  function cssq(p){
+    if(p.id) return '#'+CSS.escape(p.id);
+    if(p.testAttrs[0]) return p.testAttrs[0].value?`[${p.testAttrs[0].name}="${p.testAttrs[0].value}"]`:`[${p.testAttrs[0].name}]`;
+    if(p.name) return `${p.tag}[name="${p.name}"]`;
+    if(p.placeholder) return `${p.tag}[placeholder="${p.placeholder}"]`;
+    if(p.ariaLabel) return `${p.tag}[aria-label="${p.ariaLabel}"]`;
+    if(p.stableClass) return `${p.tag}.${p.stableClass}`;
+    if(p.type) return `${p.tag}[type="${p.type}"]`;
+    return p.tag;
+  }
+
+  function xp(p){
+    if(p.id) return `//${p.tag}[@id="${p.id}"]`;
+    if(p.name) return `//${p.tag}[@name="${p.name}"]`;
+    if(p.placeholder) return `//${p.tag}[@placeholder="${p.placeholder}"]`;
+    if(p.ariaLabel) return `//${p.tag}[@aria-label="${p.ariaLabel}"]`;
+    if(p.text&&p.text.length<60) return `//${p.tag}[normalize-space()="${p.text}"]`;
+    if(p.stableClass) return `//${p.tag}[contains(@class,"${p.stableClass}")]`;
+    return `//`+p.tag;
+  }
+
+  function eh(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  // -- LOCATOR DEFINITIONS --
+  const LD = {
+    selenium:[
+      {id:'by_id',label:'By ID',tip:'Fastest & most reliable — always prefer ID when present.',avail:p=>!!p.id,
+        code:(p,l)=>({Java:`driver.findElement(By.id("${p.id}"));`,Python:`driver.find_element(By.ID, "${p.id}")`,['C#']:`driver.FindElement(By.Id("${p.id}"));`,JavaScript:`await driver.findElement(By.id('${p.id}'));`,Ruby:`driver.find_element(id: '${p.id}')`})[l]},
+      {id:'by_name',label:'By Name',tip:'Reliable for form controls — name attributes are stable.',avail:p=>!!p.name,
+        code:(p,l)=>({Java:`driver.findElement(By.name("${p.name}"));`,Python:`driver.find_element(By.NAME, "${p.name}")`,['C#']:`driver.FindElement(By.Name("${p.name}"));`,JavaScript:`await driver.findElement(By.name('${p.name}'));`,Ruby:`driver.find_element(name: '${p.name}')`})[l]},
+      {id:'by_css_tid',label:'By CSS (Test Attribute)',tip:'Test-specific attributes survive styling changes — use when available.',avail:p=>p.testAttrs.length>0,
+        code:(p,l)=>{const s=p.testAttrs[0].value?`[${p.testAttrs[0].name}="${p.testAttrs[0].value}"]`:`[${p.testAttrs[0].name}]`;return({Java:`driver.findElement(By.cssSelector("${s}"));`,Python:`driver.find_element(By.CSS_SELECTOR, "${s}")`,['C#']:`driver.FindElement(By.CssSelector("${s}"));`,JavaScript:`await driver.findElement(By.css('${s}'));`,Ruby:`driver.find_element(css: '${s}')`})[l];}},
+      {id:'by_css',label:'By CSS Selector',tip:'Readable and flexible — prefer over XPath for standard DOM traversal.',avail:p=>true,
+        code:(p,l)=>{const s=cssq(p);return({Java:`driver.findElement(By.cssSelector("${s}"));`,Python:`driver.find_element(By.CSS_SELECTOR, "${s}")`,['C#']:`driver.FindElement(By.CssSelector("${s}"));`,JavaScript:`await driver.findElement(By.css('${s}'));`,Ruby:`driver.find_element(css: '${s}')`})[l];}},
+      {id:'by_xpath',label:'By XPath',tip:'Flexible but verbose — good for complex traversals; fragile under DOM restructuring.',avail:p=>true,
+        code:(p,l)=>{const x=xp(p);return({Java:`driver.findElement(By.xpath("${x}"));`,Python:`driver.find_element(By.XPATH, "${x}")`,['C#']:`driver.FindElement(By.XPath("${x}"));`,JavaScript:`await driver.findElement(By.xpath('${x}'));`,Ruby:`driver.find_element(xpath: '${x}')`})[l];}},
+      {id:'by_class',label:'By Class Name',tip:'Use only stable class names — avoid state/modifier classes (--active etc.).',avail:p=>!!p.stableClass,
+        code:(p,l)=>({Java:`driver.findElement(By.className("${p.stableClass}"));`,Python:`driver.find_element(By.CLASS_NAME, "${p.stableClass}")`,['C#']:`driver.FindElement(By.ClassName("${p.stableClass}"));`,JavaScript:`await driver.findElement(By.className('${p.stableClass}'));`,Ruby:`driver.find_element(class: '${p.stableClass}')`})[l]},
+      {id:'by_tag',label:'By Tag Name',tip:'Last resort only — tag names are rarely unique.',avail:p=>true,
+        code:(p,l)=>({Java:`driver.findElement(By.tagName("${p.tag}"));`,Python:`driver.find_element(By.TAG_NAME, "${p.tag}")`,['C#']:`driver.FindElement(By.TagName("${p.tag}"));`,JavaScript:`await driver.findElement(By.tagName('${p.tag}'));`,Ruby:`driver.find_element(tag_name: '${p.tag}')`})[l]}
+    ],
+    playwright:[
+      {id:'pw_role',label:'getByRole',tip:'Most resilient — tests what users see and interact with via ARIA semantics.',avail:p=>!!p.role,
+        code:(p,l)=>{const r=p.role,nm=p.placeholder||p.ariaLabel||p.text||p.title||'';const nJs=nm?`, { name: '${nm}' }`:'',nPy=nm?`, name="${nm}"`:'',nJa=nm?`\n    .setName("${nm}")`:'',nCs=nm?`, new() { Name = "${nm}" }`:'';
+          return({JavaScript:`await page.getByRole('${r}'${nJs});`,TypeScript:`await page.getByRole('${r}'${nJs});`,Python:`page.get_by_role("${r}"${nPy})`,Java:`page.getByRole(AriaRole.${r.toUpperCase()}, new Page.GetByRoleOptions()${nJa});`,['C#']:`await page.GetByRole(AriaRole.${r.charAt(0).toUpperCase()+r.slice(1)}${nCs});`})[l];}},
+      {id:'pw_label',label:'getByLabel',tip:'Excellent for form fields — mirrors how screen readers identify inputs.',avail:p=>!!(p.ariaLabel||p.title),
+        code:(p,l)=>{const lb=p.ariaLabel||p.title;return({JavaScript:`await page.getByLabel('${lb}');`,TypeScript:`await page.getByLabel('${lb}');`,Python:`page.get_by_label("${lb}")`,Java:`page.getByLabel("${lb}")`,['C#']:`await page.GetByLabel("${lb}");`})[l];}},
+      {id:'pw_ph',label:'getByPlaceholder',tip:'Good for inputs without explicit labels — placeholder is user-visible and meaningful.',avail:p=>!!p.placeholder,
+        code:(p,l)=>({JavaScript:`await page.getByPlaceholder('${p.placeholder}');`,TypeScript:`await page.getByPlaceholder('${p.placeholder}');`,Python:`page.get_by_placeholder("${p.placeholder}")`,Java:`page.getByPlaceholder("${p.placeholder}")`,['C#']:`await page.GetByPlaceholder("${p.placeholder}");`})[l]},
+      {id:'pw_text',label:'getByText',tip:'Ideal for buttons & links — connects test to real user-facing text.',avail:p=>!!(p.text&&p.text.length>0&&p.text.length<100),
+        code:(p,l)=>({JavaScript:`await page.getByText('${p.text}');`,TypeScript:`await page.getByText('${p.text}');`,Python:`page.get_by_text("${p.text}")`,Java:`page.getByText("${p.text}")`,['C#']:`await page.GetByText("${p.text}");`})[l]},
+      {id:'pw_tid',label:'getByTestId',tip:'Stable & explicit — top-tier choice when a test attribute exists.',avail:p=>p.testAttrs.length>0&&!!p.testAttrs[0].value,
+        code:(p,l)=>({JavaScript:`await page.getByTestId('${p.testAttrs[0].value}');`,TypeScript:`await page.getByTestId('${p.testAttrs[0].value}');`,Python:`page.get_by_test_id("${p.testAttrs[0].value}")`,Java:`page.getByTestId("${p.testAttrs[0].value}")`,['C#']:`await page.GetByTestId("${p.testAttrs[0].value}");`})[l]},
+      {id:'pw_alt',label:'getByAltText',tip:'For images — alt text is accessible and usually stable.',avail:p=>!!p.alt,
+        code:(p,l)=>({JavaScript:`await page.getByAltText('${p.alt}');`,TypeScript:`await page.getByAltText('${p.alt}');`,Python:`page.get_by_alt_text("${p.alt}")`,Java:`page.getByAltText("${p.alt}")`,['C#']:`await page.GetByAltText("${p.alt}");`})[l]},
+      {id:'pw_css',label:'locator (CSS)',tip:'Flexible fallback — combine with has-text() or filter() for precision.',avail:p=>true,
+        code:(p,l)=>{const s=cssq(p);return({JavaScript:`await page.locator('${s}');`,TypeScript:`await page.locator('${s}');`,Python:`page.locator("${s}")`,Java:`page.locator("${s}")`,['C#']:`await page.Locator("${s}");`})[l];}},
+      {id:'pw_xpath',label:'locator (XPath)',tip:'Last resort — only when semantic or CSS locators cannot reach the element.',avail:p=>true,
+        code:(p,l)=>{const x=xp(p);return({JavaScript:`await page.locator('xpath=${x}');`,TypeScript:`await page.locator('xpath=${x}');`,Python:`page.locator("xpath=${x}")`,Java:`page.locator("xpath=${x}")`,['C#']:`await page.Locator("xpath=${x}");`})[l];}}
+    ],
+    cypress:[
+      {id:'cy_tid',label:'cy.get (Test Attribute)',tip:'Cypress best practice — data-cy/data-testid attrs survive refactors & rebrands.',avail:p=>p.testAttrs.length>0,
+        code:(p,l)=>{const s=p.testAttrs[0].value?`[${p.testAttrs[0].name}="${p.testAttrs[0].value}"]`:`[${p.testAttrs[0].name}]`;return `cy.get('${s}');`;}},
+      {id:'cy_id',label:'cy.get (ID)',tip:'Reliable if IDs are stable — be cautious with auto-generated IDs.',avail:p=>!!p.id,code:(p,l)=>`cy.get('#${CSS.escape(p.id)}');`},
+      {id:'cy_name',label:'cy.get (Name)',tip:'Good for form fields — name attribute is stable.',avail:p=>!!p.name,code:(p,l)=>`cy.get('[name="${p.name}"]');`},
+      {id:'cy_ph',label:'cy.get (Placeholder)',tip:'Use with caution — placeholder text may change with copy/UX updates.',avail:p=>!!p.placeholder,code:(p,l)=>`cy.get('[placeholder="${p.placeholder}"]');`},
+      {id:'cy_txt',label:'cy.contains (Text)',tip:'Natural for buttons & links — ties test to visible user-facing text.',avail:p=>!!(p.text&&p.text.length>0&&p.text.length<100),code:(p,l)=>`cy.contains('${p.text}');`},
+      {id:'cy_aria',label:'cy.get (Aria Label)',tip:'Accessibility-aware selector — robust when aria-label is consistently set.',avail:p=>!!p.ariaLabel,code:(p,l)=>`cy.get('[aria-label="${p.ariaLabel}"]');`},
+      {id:'cy_cls',label:'cy.get (Class)',tip:'Last resort — class names change frequently with component/styling updates.',avail:p=>!!p.stableClass,code:(p,l)=>`cy.get('.${p.stableClass}');`},
+      {id:'cy_css',label:'cy.get (CSS Selector)',tip:'Versatile fallback — combine tag and attribute for better specificity.',avail:p=>true,code:(p,l)=>`cy.get('${cssq(p)}');`}
+    ]
+  };
+
+  // -- GENERATE --
+  function generateFromElement(el) {
+    const props=extractProps(el);
+    const defs=LD[state.framework].filter(d=>d.avail(props));
+    if(!defs.length){showErr('No locators could be generated for this element.');return;}
+    renderOutput(defs,props,el);
+  }
+
+  function generate() {
+    const raw=document.getElementById('htmlInput').value.trim();
+    hideErr();
+    if(!raw){showErr('Please paste an HTML element first.');return;}
+    const el=parseHTMLEl(raw);
+    if(!el){showErr("Could not parse HTML. Make sure it's a valid, single HTML element.");return;}
+    generateFromElement(el);
+  }
+
+  function renderOutput(defs,props,el) {
+    const section=document.getElementById('output-section');
+    const list=document.getElementById('locatorList');
+    document.getElementById('outputTitle').textContent=`${FRAMEWORKS[state.framework].name} Locators — ${state.language}`;
+    document.getElementById('outputMeta').textContent=`${defs.length} locator${defs.length!==1?'s':''} · <${el.tagName.toLowerCase()}>`;
+    list.innerHTML='';
+    defs.forEach((def,idx)=>{
+      const code=def.code(props,state.language);
+      const best=idx===0;
+      const card=document.createElement('div');
+      card.className='loc-card'+(best?' is-best':'');
+      card.setAttribute('tabindex','0'); card.style.animationDelay=idx*40+'ms';
+      card.innerHTML=`
+        <div class="loc-header">
+          <div class="loc-meta">
+            <div class="loc-rank">${idx+1}</div>
+            <div class="loc-type">${def.label}</div>
+            ${best?'<span class="badge-best">✦ Best</span>':''}
+          </div>
+          <button class="copy-btn" aria-label="Copy ${def.label}">⎘ <span class="cl">Copy</span></button>
+        </div>
+        <pre class="loc-code">${eh(code)}</pre>
+        <div class="loc-tip">${def.tip}</div>`;
+      const btn=card.querySelector('.copy-btn');
+      const doCopy=()=>{ navigator.clipboard.writeText(code).then(()=>{ btn.classList.add('copied'); btn.querySelector('.cl').textContent='Copied!'; showToast('Copied: '+def.label); setTimeout(()=>{btn.classList.remove('copied');btn.querySelector('.cl').textContent='Copy';},1800); }).catch(()=>{ showCopyErr(btn); }); };
+      card.addEventListener('click',doCopy);
+      card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();doCopy();}});
+      btn.addEventListener('click',e=>{e.stopPropagation();doCopy();});
+      list.appendChild(card);
+    });
+    setOutputTab('locators');
+    section.classList.add('show');
+    section.scrollIntoView({behavior:'smooth',block:'nearest'});
+    renderActions(props);
+  }
+
+  // -- OUTPUT TABS --
+  function setOutputTab(tab){
+    state.outputTab=tab;
+    ['locators','actions'].forEach(t=>{
+      document.getElementById('out-tab-'+t).classList.toggle('active',t===tab);
+      document.getElementById('out-tab-'+t).setAttribute('aria-selected',t===tab);
+      document.getElementById('out-panel-'+t).classList.toggle('hidden',t!==tab);
+    });
+  }
+  document.getElementById('out-tab-locators').addEventListener('click',()=>setOutputTab('locators'));
+  document.getElementById('out-tab-actions').addEventListener('click',()=>setOutputTab('actions'));
+
+  // -- ELEMENT TYPE CLASSIFIER --
+  function getElType(props){
+    const t=props.tag, tp=props.type||'';
+    if(t==='select') return 'select';
+    if(t==='textarea') return 'textarea';
+    if(t==='a') return 'link';
+    if(t==='img') return 'image';
+    if(t==='input'){
+      if(tp==='checkbox') return 'checkbox';
+      if(tp==='radio') return 'radio';
+      if(['submit','button','reset'].includes(tp)) return 'button';
+      return 'textinput';
+    }
+    if(t==='button') return 'button';
+    return 'generic';
+  }
+
+  const EL_TYPE_LABELS = {
+    textinput:'Text Input', textarea:'Textarea', button:'Button', select:'Dropdown / Select',
+    checkbox:'Checkbox', radio:'Radio Button', link:'Link / Anchor', image:'Image', generic:'Element'
+  };
+
+  // -- ACTION DEFINITIONS --
+  const ACTION_CATS = [
+    {id:'Interaction', icon:'🖱️'},
+    {id:'Assertion',   icon:'✅'},
+    {id:'Keyboard',    icon:'⌨️'},
+    {id:'Mouse',       icon:'🖱️'},
+    {id:'Wait',        icon:'⏳'}
+  ];
+
+  const ACTION_DEFS = [
+    /* -- INTERACTION -- */
+    {id:'click',category:'Interaction',label:'Click',tip:'Simulates a mouse click on the element.',
+     elTypes:['button','link','checkbox','radio','generic','image'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`element.click();`,Python:`element.click()`,['C#']:`element.Click();`,JavaScript:`await element.click();`,Ruby:`element.click`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.click();`,TypeScript:`await locator.click();`,Python:`locator.click()`,Java:`locator.click();`,['C#']:`await locator.ClickAsync();`})[l];
+      return `.click()`;
+    }},
+    {id:'type',category:'Interaction',label:'Type / Send Keys',tip:'Types text into the input field.',
+     elTypes:['textinput','textarea'],
+     code:(p,fw,l)=>{
+      const ph=p.placeholder||'your text';
+      if(fw==='selenium') return ({Java:`element.sendKeys("${ph}");`,Python:`element.send_keys("${ph}")`,['C#']:`element.SendKeys("${ph}");`,JavaScript:`await element.sendKeys("${ph}");`,Ruby:`element.send_keys("${ph}")`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.fill('${ph}');`,TypeScript:`await locator.fill('${ph}');`,Python:`locator.fill("${ph}")`,Java:`locator.fill("${ph}");`,['C#']:`await locator.FillAsync("${ph}");`})[l];
+      return `.type('${ph}')`;
+    }},
+    {id:'clear',category:'Interaction',label:'Clear',tip:'Clears the current value from the input field.',
+     elTypes:['textinput','textarea'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`element.clear();`,Python:`element.clear()`,['C#']:`element.Clear();`,JavaScript:`await element.clear();`,Ruby:`element.clear`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.clear();`,TypeScript:`await locator.clear();`,Python:`locator.clear()`,Java:`locator.clear();`,['C#']:`await locator.ClearAsync();`})[l];
+      return `.clear()`;
+    }},
+    {id:'submit',category:'Interaction',label:'Submit Form',tip:'Submits the form containing this element.',
+     elTypes:['textinput','textarea','button'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`element.submit();`,Python:`element.submit()`,['C#']:`element.Submit();`,JavaScript:`await element.submit();`,Ruby:`element.submit`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.press('Enter');`,TypeScript:`await locator.press('Enter');`,Python:`locator.press("Enter")`,Java:`locator.press("Enter");`,['C#']:`await locator.PressAsync("Enter");`})[l];
+      return `.type('{enter}')`;
+    }},
+    {id:'select_txt',category:'Interaction',label:'Select By Visible Text',tip:'Selects a dropdown option by its displayed text.',
+     elTypes:['select'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`new Select(element).selectByVisibleText("Option Text");`,Python:`Select(element).select_by_visible_text("Option Text")`,['C#']:`new SelectElement(element).SelectByText("Option Text");`,JavaScript:`await element.selectByVisibleText("Option Text");`,Ruby:`element.find("option[text()='Option Text']").select_option`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.selectOption({ label: 'Option Text' });`,TypeScript:`await locator.selectOption({ label: 'Option Text' });`,Python:`locator.select_option(label="Option Text")`,Java:`locator.selectOption(new SelectOption().setLabel("Option Text"));`,['C#']:`await locator.SelectOptionAsync(new SelectOptionValue { Label = "Option Text" });`})[l];
+      return `.select('Option Text')`;
+    }},
+    {id:'select_val',category:'Interaction',label:'Select By Value',tip:'Selects a dropdown option by its value attribute.',
+     elTypes:['select'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`new Select(element).selectByValue("optionValue");`,Python:`Select(element).select_by_value("optionValue")`,['C#']:`new SelectElement(element).SelectByValue("optionValue");`,JavaScript:`await element.selectByValue("optionValue");`,Ruby:`element.find("option[@value='optionValue']").select_option`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.selectOption('optionValue');`,TypeScript:`await locator.selectOption('optionValue');`,Python:`locator.select_option("optionValue")`,Java:`locator.selectOption("optionValue");`,['C#']:`await locator.SelectOptionAsync("optionValue");`})[l];
+      return `.select('optionValue')`;
+    }},
+    {id:'select_idx',category:'Interaction',label:'Select By Index',tip:'Selects a dropdown option by its zero-based index.',
+     elTypes:['select'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`new Select(element).selectByIndex(0);`,Python:`Select(element).select_by_index(0)`,['C#']:`new SelectElement(element).SelectByIndex(0);`,JavaScript:`await element.selectByIndex(0);`,Ruby:`element.find("option:nth-child(1)").select_option`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.selectOption({ index: 0 });`,TypeScript:`await locator.selectOption({ index: 0 });`,Python:`locator.select_option(index=0)`,Java:`locator.selectOption(new SelectOption().setIndex(0));`,['C#']:`await locator.SelectOptionAsync(new SelectOptionValue { Index = 0 });`})[l];
+      return `.select(0)`;
+    }},
+    {id:'check',category:'Interaction',label:'Check / Uncheck',tip:'Toggles the checkbox or radio button state.',
+     elTypes:['checkbox','radio'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`element.click(); // toggles check state`,Python:`element.click()  # toggles check state`,['C#']:`element.Click(); // toggles check state`,JavaScript:`await element.click(); // toggles check state`,Ruby:`element.click # toggles check state`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.check();\n// or uncheck:\nawait locator.uncheck();`,TypeScript:`await locator.check();\n// or uncheck:\nawait locator.uncheck();`,Python:`locator.check()\n# or uncheck:\nlocator.uncheck()`,Java:`locator.check();\n// or uncheck:\nlocator.uncheck();`,['C#']:`await locator.CheckAsync();\n// or uncheck:\nawait locator.UncheckAsync();`})[l];
+      return `.check()\n// or uncheck:\n.uncheck()`;
+    }},
+
+    /* -- ASSERTION -- */
+    {id:'is_visible',category:'Assertion',label:'Is Displayed / Visible',tip:'Checks if the element is visible on the page.',
+     elTypes:['all'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`boolean isVisible = element.isDisplayed();`,Python:`is_visible = element.is_displayed()`,['C#']:`bool isVisible = element.Displayed;`,JavaScript:`const isVisible = await element.isDisplayed();`,Ruby:`is_visible = element.displayed?`})[l];
+      if(fw==='playwright') return ({JavaScript:`const isVisible = await locator.isVisible();`,TypeScript:`const isVisible = await locator.isVisible();`,Python:`is_visible = locator.is_visible()`,Java:`boolean isVisible = locator.isVisible();`,['C#']:`bool isVisible = await locator.IsVisibleAsync();`})[l];
+      return `.should('be.visible')`;
+    }},
+    {id:'is_enabled',category:'Assertion',label:'Is Enabled',tip:'Checks if the element is enabled and interactable.',
+     elTypes:['textinput','textarea','button','select','checkbox','radio'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`boolean isEnabled = element.isEnabled();`,Python:`is_enabled = element.is_enabled()`,['C#']:`bool isEnabled = element.Enabled;`,JavaScript:`const isEnabled = await element.isEnabled();`,Ruby:`is_enabled = element.enabled?`})[l];
+      if(fw==='playwright') return ({JavaScript:`const isEnabled = await locator.isEnabled();`,TypeScript:`const isEnabled = await locator.isEnabled();`,Python:`is_enabled = locator.is_enabled()`,Java:`boolean isEnabled = locator.isEnabled();`,['C#']:`bool isEnabled = await locator.IsEnabledAsync();`})[l];
+      return `.should('not.be.disabled')`;
+    }},
+    {id:'get_text',category:'Assertion',label:'Get Text',tip:'Retrieves the visible text content of the element.',
+     elTypes:['button','link','generic','textarea'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`String text = element.getText();`,Python:`text = element.text`,['C#']:`string text = element.Text;`,JavaScript:`const text = await element.getText();`,Ruby:`text = element.text`})[l];
+      if(fw==='playwright') return ({JavaScript:`const text = await locator.innerText();`,TypeScript:`const text = await locator.innerText();`,Python:`text = locator.inner_text()`,Java:`String text = locator.innerText();`,['C#']:`string text = await locator.InnerTextAsync();`})[l];
+      return `.invoke('text').then(text => { /* use text */ })`;
+    }},
+    {id:'get_value',category:'Assertion',label:'Get Value',tip:'Gets the current value of the input or select field.',
+     elTypes:['textinput','textarea','select'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`String value = element.getAttribute("value");`,Python:`value = element.get_attribute("value")`,['C#']:`string value = element.GetAttribute("value");`,JavaScript:`const value = await element.getAttribute("value");`,Ruby:`value = element.attribute("value")`})[l];
+      if(fw==='playwright') return ({JavaScript:`const value = await locator.inputValue();`,TypeScript:`const value = await locator.inputValue();`,Python:`value = locator.input_value()`,Java:`String value = locator.inputValue();`,['C#']:`string value = await locator.InputValueAsync();`})[l];
+      return `.invoke('val').then(val => { /* use val */ })`;
+    }},
+    {id:'is_checked',category:'Assertion',label:'Is Checked / Selected',tip:'Verifies whether a checkbox or radio is currently selected.',
+     elTypes:['checkbox','radio'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`boolean isChecked = element.isSelected();`,Python:`is_checked = element.is_selected()`,['C#']:`bool isChecked = element.Selected;`,JavaScript:`const isChecked = await element.isSelected();`,Ruby:`is_checked = element.selected?`})[l];
+      if(fw==='playwright') return ({JavaScript:`const isChecked = await locator.isChecked();`,TypeScript:`const isChecked = await locator.isChecked();`,Python:`is_checked = locator.is_checked()`,Java:`boolean isChecked = locator.isChecked();`,['C#']:`bool isChecked = await locator.IsCheckedAsync();`})[l];
+      return `.should('be.checked')\n// or not checked:\n.should('not.be.checked')`;
+    }},
+    {id:'get_attr',category:'Assertion',label:'Get Attribute',tip:'Retrieves the value of any HTML attribute from the element.',
+     elTypes:['all'],
+     code:(p,fw,l)=>{
+      const attr=p.href?'href':p.ariaLabel?'aria-label':'attribute-name';
+      if(fw==='selenium') return ({Java:`String attr = element.getAttribute("${attr}");`,Python:`attr = element.get_attribute("${attr}")`,['C#']:`string attr = element.GetAttribute("${attr}");`,JavaScript:`const attr = await element.getAttribute("${attr}");`,Ruby:`attr = element.attribute("${attr}")`})[l];
+      if(fw==='playwright') return ({JavaScript:`const attr = await locator.getAttribute('${attr}');`,TypeScript:`const attr = await locator.getAttribute('${attr}');`,Python:`attr = locator.get_attribute("${attr}")`,Java:`String attr = locator.getAttribute("${attr}");`,['C#']:`string attr = await locator.GetAttributeAsync("${attr}");`})[l];
+      return `.invoke('attr', '${attr}').then(val => { /* use val */ })`;
+    }},
+
+    /* -- KEYBOARD -- */
+    {id:'key_tab',category:'Keyboard',label:'Press Tab',tip:'Moves focus to the next focusable element.',
+     elTypes:['textinput','textarea','button','select','link'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`element.sendKeys(Keys.TAB);`,Python:`element.send_keys(Keys.TAB)`,['C#']:`element.SendKeys(Keys.Tab);`,JavaScript:`await element.sendKeys(Key.TAB);`,Ruby:`element.send_keys(:tab)`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.press('Tab');`,TypeScript:`await locator.press('Tab');`,Python:`locator.press("Tab")`,Java:`locator.press("Tab");`,['C#']:`await locator.PressAsync("Tab");`})[l];
+      return `.type('{tab}')`;
+    }},
+    {id:'key_enter',category:'Keyboard',label:'Press Enter',tip:'Simulates Enter key — useful for form submission or confirming.',
+     elTypes:['textinput','textarea','button','link'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`element.sendKeys(Keys.ENTER);`,Python:`element.send_keys(Keys.ENTER)`,['C#']:`element.SendKeys(Keys.Return);`,JavaScript:`await element.sendKeys(Key.ENTER);`,Ruby:`element.send_keys(:return)`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.press('Enter');`,TypeScript:`await locator.press('Enter');`,Python:`locator.press("Enter")`,Java:`locator.press("Enter");`,['C#']:`await locator.PressAsync("Enter");`})[l];
+      return `.type('{enter}')`;
+    }},
+    {id:'key_esc',category:'Keyboard',label:'Press Escape',tip:'Simulates Escape key — useful for closing modals or dropdowns.',
+     elTypes:['textinput','textarea','select','generic','button'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`element.sendKeys(Keys.ESCAPE);`,Python:`element.send_keys(Keys.ESCAPE)`,['C#']:`element.SendKeys(Keys.Escape);`,JavaScript:`await element.sendKeys(Key.ESCAPE);`,Ruby:`element.send_keys(:escape)`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.press('Escape');`,TypeScript:`await locator.press('Escape');`,Python:`locator.press("Escape")`,Java:`locator.press("Escape");`,['C#']:`await locator.PressAsync("Escape");`})[l];
+      return `.type('{esc}')`;
+    }},
+
+    /* -- MOUSE -- */
+    {id:'hover',category:'Mouse',label:'Hover / Mouse Over',tip:'Moves the mouse over the element — triggers hover states and tooltips.',
+     elTypes:['all'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`new Actions(driver).moveToElement(element).perform();`,Python:`ActionChains(driver).move_to_element(element).perform()`,['C#']:`new Actions(driver).MoveToElement(element).Perform();`,JavaScript:`await driver.actions().move({ origin: element }).perform();`,Ruby:`driver.action.move_to(element).perform`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.hover();`,TypeScript:`await locator.hover();`,Python:`locator.hover()`,Java:`locator.hover();`,['C#']:`await locator.HoverAsync();`})[l];
+      return `.trigger('mouseover')`;
+    }},
+    {id:'dblclick',category:'Mouse',label:'Double Click',tip:'Simulates a double-click — useful for text selection or toggle actions.',
+     elTypes:['all'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`new Actions(driver).doubleClick(element).perform();`,Python:`ActionChains(driver).double_click(element).perform()`,['C#']:`new Actions(driver).DoubleClick(element).Perform();`,JavaScript:`await driver.actions().doubleClick(element).perform();`,Ruby:`driver.action.double_click(element).perform`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.dblclick();`,TypeScript:`await locator.dblclick();`,Python:`locator.dblclick()`,Java:`locator.dblclick();`,['C#']:`await locator.DblClickAsync();`})[l];
+      return `.dblclick()`;
+    }},
+    {id:'rightclick',category:'Mouse',label:'Right Click (Context Menu)',tip:'Simulates a right-click to open the context menu.',
+     elTypes:['all'],
+     code:(p,fw,l)=>{
+      if(fw==='selenium') return ({Java:`new Actions(driver).contextClick(element).perform();`,Python:`ActionChains(driver).context_click(element).perform()`,['C#']:`new Actions(driver).ContextClick(element).Perform();`,JavaScript:`await driver.actions().contextClick(element).perform();`,Ruby:`driver.action.context_click(element).perform`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.click({ button: 'right' });`,TypeScript:`await locator.click({ button: 'right' });`,Python:`locator.click(button="right")`,Java:`locator.click(new Locator.ClickOptions().setButton(MouseButton.RIGHT));`,['C#']:`await locator.ClickAsync(new LocatorClickOptions { Button = MouseButton.Right });`})[l];
+      return `.rightclick()`;
+    }},
+
+    /* -- WAIT -- */
+    {id:'wait_vis',category:'Wait',label:'Wait For Visible',tip:'Pauses execution until the element is visible on the page.',
+     elTypes:['all'],
+     code:(p,fw,l)=>{
+      const sel=cssq(p);
+      if(fw==='selenium') return ({Java:`WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));\nwait.until(ExpectedConditions.visibilityOf(element));`,Python:`WebDriverWait(driver, 10).until(\n    EC.visibility_of(element)\n)`,['C#']:`new WebDriverWait(driver, TimeSpan.FromSeconds(10))\n    .Until(ExpectedConditions.ElementIsVisible(\n        By.CssSelector("${sel}")));`,JavaScript:`await driver.wait(until.elementIsVisible(element), 10000);`,Ruby:`Selenium::WebDriver::Wait.new(timeout: 10)\n    .until { element.displayed? }`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.waitFor({ state: 'visible' });`,TypeScript:`await locator.waitFor({ state: 'visible' });`,Python:`locator.wait_for(state="visible")`,Java:`locator.waitFor(new Locator.WaitForOptions()\n    .setState(WaitForSelectorState.VISIBLE));`,['C#']:`await locator.WaitForAsync(new LocatorWaitForOptions\n    { State = WaitForSelectorState.Visible });`})[l];
+      return `.should('be.visible')`;
+    }},
+    {id:'wait_click',category:'Wait',label:'Wait For Clickable',tip:'Waits until the element is visible and enabled — ready to be clicked.',
+     elTypes:['button','link','checkbox','radio','select','textinput'],
+     code:(p,fw,l)=>{
+      const sel=cssq(p);
+      if(fw==='selenium') return ({Java:`WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));\nwait.until(ExpectedConditions.elementToBeClickable(element));`,Python:`WebDriverWait(driver, 10).until(\n    EC.element_to_be_clickable(element)\n)`,['C#']:`new WebDriverWait(driver, TimeSpan.FromSeconds(10))\n    .Until(ExpectedConditions.ElementToBeClickable(\n        By.CssSelector("${sel}")));`,JavaScript:`await driver.wait(until.elementIsEnabled(element), 10000);`,Ruby:`Selenium::WebDriver::Wait.new(timeout: 10)\n    .until { element.enabled? }`})[l];
+      if(fw==='playwright') return ({JavaScript:`await expect(locator).toBeEnabled();\nawait locator.waitFor({ state: 'visible' });`,TypeScript:`await expect(locator).toBeEnabled();\nawait locator.waitFor({ state: 'visible' });`,Python:`expect(locator).to_be_enabled()\nlocator.wait_for(state="visible")`,Java:`assertThat(locator).isEnabled();\nlocator.waitFor();`,['C#']:`await Expect(locator).ToBeEnabledAsync();\nawait locator.WaitForAsync();`})[l];
+      return `.should('not.be.disabled')\n    .and('be.visible')`;
+    }},
+    {id:'wait_hidden',category:'Wait',label:'Wait For Hidden',tip:'Waits until the element is no longer visible — e.g. after a modal closes.',
+     elTypes:['all'],
+     code:(p,fw,l)=>{
+      const sel=cssq(p);
+      if(fw==='selenium') return ({Java:`WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));\nwait.until(ExpectedConditions.invisibilityOf(element));`,Python:`WebDriverWait(driver, 10).until(\n    EC.invisibility_of_element(element)\n)`,['C#']:`new WebDriverWait(driver, TimeSpan.FromSeconds(10))\n    .Until(ExpectedConditions.InvisibilityOfElementLocated(\n        By.CssSelector("${sel}")));`,JavaScript:`await driver.wait(until.elementIsNotVisible(element), 10000);`,Ruby:`Selenium::WebDriver::Wait.new(timeout: 10)\n    .until { !element.displayed? }`})[l];
+      if(fw==='playwright') return ({JavaScript:`await locator.waitFor({ state: 'hidden' });`,TypeScript:`await locator.waitFor({ state: 'hidden' });`,Python:`locator.wait_for(state="hidden")`,Java:`locator.waitFor(new Locator.WaitForOptions()\n    .setState(WaitForSelectorState.HIDDEN));`,['C#']:`await locator.WaitForAsync(new LocatorWaitForOptions\n    { State = WaitForSelectorState.Hidden });`})[l];
+      return `.should('not.be.visible')`;
+    }}
+  ];
+
+  // -- RENDER ACTIONS --
+  function renderActions(props){
+    const elType=getElType(props);
+    const fw=state.framework, l=state.language;
+    const container=document.getElementById('actionsList');
+    container.innerHTML='';
+
+    // Element type badge
+    const badge=document.createElement('div');
+    badge.className='el-type-badge';
+    badge.innerHTML=`Detected: <strong>${EL_TYPE_LABELS[elType]||'Element'}</strong> &lt;${props.tag}${props.type?'['+props.type+']':''}&gt;`;
+    container.appendChild(badge);
+
+    let totalActions=0;
+    ACTION_CATS.forEach(cat=>{
+      const actions=ACTION_DEFS.filter(a=>
+        a.category===cat.id &&
+        (a.elTypes.includes('all')||a.elTypes.includes(elType))
+      );
+      if(!actions.length) return;
+      totalActions+=actions.length;
+
+      const catDiv=document.createElement('div');
+      catDiv.className='action-category';
+      catDiv.innerHTML=`<div class="action-cat-label">${cat.icon} ${cat.id}</div><div class="action-list-inner" id="acat-${cat.id}"></div>`;
+      container.appendChild(catDiv);
+
+      const listDiv=catDiv.querySelector('#acat-'+cat.id);
+      actions.forEach((act,idx)=>{
+        const code=act.code(props,fw,l);
+        const card=document.createElement('div');
+        card.className='action-card'; card.setAttribute('tabindex','0');
+        card.style.animationDelay=idx*25+'ms';
+        card.innerHTML=`
+          <div class="action-header">
+            <div class="action-label">${act.label}</div>
+            <button class="copy-btn" aria-label="Copy ${act.label}">⎘ <span class="cl">Copy</span></button>
+          </div>
+          <pre class="action-code">${eh(code)}</pre>
+          <div class="action-tip">${act.tip}</div>`;
+        const btn=card.querySelector('.copy-btn');
+        const doCopy=()=>{ navigator.clipboard.writeText(code).then(()=>{btn.classList.add('copied');btn.querySelector('.cl').textContent='Copied!';showToast('Copied: '+act.label);setTimeout(()=>{btn.classList.remove('copied');btn.querySelector('.cl').textContent='Copy';},1800);}).catch(()=>{ showCopyErr(btn); }); };
+        card.addEventListener('click',doCopy);
+        card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();doCopy();}});
+        btn.addEventListener('click',e=>{e.stopPropagation();doCopy();});
+        listDiv.appendChild(card);
+      });
+    });
+
+    if(!totalActions){
+      container.innerHTML+='<div class="empty-state"><span class="es-icon">🤔</span><p>No specific actions found for this element type.</p></div>';
+    }
+
+    // Update actions tab count
+    document.getElementById('out-tab-actions').textContent=`⚡ Actions (${totalActions})`;
+  }
+
+  function loadDOM() {
+    const raw=document.getElementById('domPasteArea').value.trim();
+    hideDomErr();
+    if(!raw){showDomErr('Please upload a file or paste HTML first.');return;}
+    const doc=new DOMParser().parseFromString(raw,'text/html');
+    state.domDoc=doc; state.domHtml=raw;
+    const allEls=doc.querySelectorAll('*').length;
+    const intEls=getInteractive(doc,'').length;
+    document.getElementById('domStats').innerHTML=
+      `<span class="dom-stat">Elements: <strong>${allEls}</strong></span>`+
+      `<span class="dom-stat">Interactive: <strong>${intEls}</strong></span>`;
+    document.getElementById('dom-input-card').classList.add('hidden');
+    document.getElementById('dom-explorer-card').classList.remove('hidden');
+    document.getElementById('interactive-count').textContent=intEls;
+    setDomView('interactive');
+  }
+
+  function reloadDOM(){
+    state.domDoc=null; state.domHtml='';
+    document.getElementById('dom-explorer-card').classList.add('hidden');
+    document.getElementById('dom-input-card').classList.remove('hidden');
+    document.getElementById('domPasteArea').value='';
+    clearFileChip(); clearSelInd();
+    document.getElementById('output-section').classList.remove('show');
+  }
+
+  /* Interactive elements */
+  const ISEL='input,button,a[href],select,textarea,[role="button"],[role="link"],[role="checkbox"],[role="radio"],[onclick],label[for]';
+
+  function getInteractive(doc,q){
+    const els=[...doc.querySelectorAll(ISEL)];
+    if(!q) return els;
+    const ql=q.toLowerCase();
+    return els.filter(el=>[el.tagName,el.id,el.getAttribute('name'),el.getAttribute('class'),el.getAttribute('placeholder'),el.textContent.trim(),el.getAttribute('type')].some(v=>v&&v.toLowerCase().includes(ql)));
+  }
+
+  function renderInteractive(q=''){
+    const list=document.getElementById('el-list');
+    const els=getInteractive(state.domDoc,q);
+    document.getElementById('interactive-count').textContent=els.length;
+    list.innerHTML='';
+    if(!els.length){list.innerHTML=`<div class="empty-state"><span class="es-icon">🔍</span><p>No elements found${q?' for "'+eh(q)+'"':''}.</p></div>`;return;}
+    els.slice(0,300).forEach(el=>{
+      const tag=el.tagName.toLowerCase(), type=el.getAttribute('type');
+      const id=el.id, name=el.getAttribute('name'), ph=el.getAttribute('placeholder');
+      const txt=el.textContent.trim().slice(0,50);
+      const cls=(el.getAttribute('class')||'').split(' ').filter(c=>c&&!/--(active|selected|hover|focus|open|show)$/.test(c)).slice(0,2).join(' ');
+      let primary=id?`#${id}`:name?`[name="${name}"]`:ph?`"${ph}"`:txt?`"${txt}"`:cls?`.${cls.split(' ')[0]}`:`<${tag}>`;
+      const td=type?`${tag}[${type}]`:tag;
+      const secondary=[type?`type="${type}"`:null,cls&&!primary.includes(cls)?cls:null].filter(Boolean).join(' · ');
+      const item=document.createElement('div');
+      item.className='el-item'; item.setAttribute('tabindex','0'); item.setAttribute('role','button');
+      item.innerHTML=`<div class="el-tag">&lt;${eh(td)}&gt;</div><div class="el-info"><div class="el-primary">${eh(primary)}</div>${secondary?`<div class="el-secondary">${eh(secondary)}</div>`:''}</div><div class="el-arrow">→</div>`;
+      const doSel=()=>{document.querySelectorAll('.el-item.selected').forEach(e=>e.classList.remove('selected'));item.classList.add('selected');selectEl(el);};
+      item.addEventListener('click',doSel);
+      item.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();doSel();}});
+      list.appendChild(item);
+    });
+    if(els.length>300){const m=document.createElement('div');m.className='empty-state';m.innerHTML=`<p>Showing 300 of ${els.length}. Use search to narrow down.</p>`;list.appendChild(m);}
+  }
+
+  /* DOM Tree */
+  function renderTree(q=''){
+    const c=document.getElementById('tree-container');
+    c.innerHTML='';
+    const body=state.domDoc.body;
+    if(!body){c.innerHTML='<div class="empty-state"><p>No body found.</p></div>';return;}
+    const ql=q.toLowerCase();
+    let matchCount=0;
+    [...body.children].forEach(child=>{
+      const node=buildNode(child,0,ql);
+      if(node){ c.appendChild(node); matchCount++; }
+    });
+    if(q&&matchCount===0){
+      c.innerHTML=`<div class="empty-state"><span class="es-icon">🔍</span><p>No elements match "${eh(q)}".</p></div>`;
     }
   }
-  const stableClass=classes.find(c=>!/(--(active|hover|focus|selected|disabled)|active|selected|hover|focus|open|show)$/i.test(c))||classes[0]||null;
-  let role=el.getAttribute('role');
-  if(!role){
-    if(tag==='a') role='link';
-    else if(tag==='button'||(tag==='input'&&['button','submit','reset'].includes(type))) role='button';
-    else if(tag==='input'&&type==='checkbox') role='checkbox';
-    else if(tag==='input'&&type==='radio') role='radio';
-    else if(tag==='input'&&type==='search') role='searchbox';
-    else if(tag==='input'||tag==='textarea') role='textbox';
-    else if(tag==='select') role='combobox';
-    else if(tag==='img') role='img';
-    else if(tag==='nav') role='navigation';
-    else if(/^h[1-6]$/.test(tag)) role='heading';
-    else if(tag==='table') role='table';
-    else if(tag==='li') role='listitem';
+
+  // Returns true if el or any descendant matches the query
+  function nodeMatches(el, ql){
+    if(!ql) return true;
+    const tag=el.tagName.toLowerCase();
+    const id=el.id||'';
+    const cls=el.getAttribute('class')||'';
+    const name=el.getAttribute('name')||'';
+    const ph=el.getAttribute('placeholder')||'';
+    const txt=el.textContent.trim().slice(0,80);
+    return [tag,id,cls,name,ph,txt].some(v=>v.toLowerCase().includes(ql));
   }
-  return {
-    tag,type,role,classes,stableClass,dataAttrs,testAttrs,
-    id:el.getAttribute('id'), name:el.getAttribute('name'),
-    placeholder:el.getAttribute('placeholder'), ariaLabel:el.getAttribute('aria-label'),
-    value:el.getAttribute('value'), title:el.getAttribute('title'),
-    href:el.getAttribute('href'), alt:el.getAttribute('alt'),
-    text:el.textContent.trim()
-  };
-}
 
-function cssq(p){
-  if(p.id) return '#'+CSS.escape(p.id);
-  if(p.testAttrs[0]) return p.testAttrs[0].value?`[${p.testAttrs[0].name}="${p.testAttrs[0].value}"]`:`[${p.testAttrs[0].name}]`;
-  if(p.name) return `${p.tag}[name="${p.name}"]`;
-  if(p.placeholder) return `${p.tag}[placeholder="${p.placeholder}"]`;
-  if(p.ariaLabel) return `${p.tag}[aria-label="${p.ariaLabel}"]`;
-  if(p.stableClass) return `${p.tag}.${p.stableClass}`;
-  if(p.type) return `${p.tag}[type="${p.type}"]`;
-  return p.tag;
-}
-
-function xp(p){
-  if(p.id) return `//${p.tag}[@id="${p.id}"]`;
-  if(p.name) return `//${p.tag}[@name="${p.name}"]`;
-  if(p.placeholder) return `//${p.tag}[@placeholder="${p.placeholder}"]`;
-  if(p.ariaLabel) return `//${p.tag}[@aria-label="${p.ariaLabel}"]`;
-  if(p.text&&p.text.length<60) return `//${p.tag}[normalize-space()="${p.text}"]`;
-  if(p.stableClass) return `//${p.tag}[contains(@class,"${p.stableClass}")]`;
-  return `//`+p.tag;
-}
-
-function eh(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-/* ════════════════════════════════════════
-   LOCATOR DEFINITIONS
-════════════════════════════════════════ */
-const LD = {
-  selenium:[
-    {id:'by_id',label:'By ID',tip:'Fastest & most reliable — always prefer ID when present.',avail:p=>!!p.id,
-      code:(p,l)=>({Java:`driver.findElement(By.id("${p.id}"));`,Python:`driver.find_element(By.ID, "${p.id}")`,['C#']:`driver.FindElement(By.Id("${p.id}"));`,JavaScript:`await driver.findElement(By.id('${p.id}'));`,Ruby:`driver.find_element(id: '${p.id}')`})[l]},
-    {id:'by_name',label:'By Name',tip:'Reliable for form controls — name attributes are stable.',avail:p=>!!p.name,
-      code:(p,l)=>({Java:`driver.findElement(By.name("${p.name}"));`,Python:`driver.find_element(By.NAME, "${p.name}")`,['C#']:`driver.FindElement(By.Name("${p.name}"));`,JavaScript:`await driver.findElement(By.name('${p.name}'));`,Ruby:`driver.find_element(name: '${p.name}')`})[l]},
-    {id:'by_css_tid',label:'By CSS (Test Attribute)',tip:'Test-specific attributes survive styling changes — use when available.',avail:p=>p.testAttrs.length>0,
-      code:(p,l)=>{const s=p.testAttrs[0].value?`[${p.testAttrs[0].name}="${p.testAttrs[0].value}"]`:`[${p.testAttrs[0].name}]`;return({Java:`driver.findElement(By.cssSelector("${s}"));`,Python:`driver.find_element(By.CSS_SELECTOR, "${s}")`,['C#']:`driver.FindElement(By.CssSelector("${s}"));`,JavaScript:`await driver.findElement(By.css('${s}'));`,Ruby:`driver.find_element(css: '${s}')`})[l];}},
-    {id:'by_css',label:'By CSS Selector',tip:'Readable and flexible — prefer over XPath for standard DOM traversal.',avail:p=>true,
-      code:(p,l)=>{const s=cssq(p);return({Java:`driver.findElement(By.cssSelector("${s}"));`,Python:`driver.find_element(By.CSS_SELECTOR, "${s}")`,['C#']:`driver.FindElement(By.CssSelector("${s}"));`,JavaScript:`await driver.findElement(By.css('${s}'));`,Ruby:`driver.find_element(css: '${s}')`})[l];}},
-    {id:'by_xpath',label:'By XPath',tip:'Flexible but verbose — good for complex traversals; fragile under DOM restructuring.',avail:p=>true,
-      code:(p,l)=>{const x=xp(p);return({Java:`driver.findElement(By.xpath("${x}"));`,Python:`driver.find_element(By.XPATH, "${x}")`,['C#']:`driver.FindElement(By.XPath("${x}"));`,JavaScript:`await driver.findElement(By.xpath('${x}'));`,Ruby:`driver.find_element(xpath: '${x}')`})[l];}},
-    {id:'by_class',label:'By Class Name',tip:'Use only stable class names — avoid state/modifier classes (--active etc.).',avail:p=>!!p.stableClass,
-      code:(p,l)=>({Java:`driver.findElement(By.className("${p.stableClass}"));`,Python:`driver.find_element(By.CLASS_NAME, "${p.stableClass}")`,['C#']:`driver.FindElement(By.ClassName("${p.stableClass}"));`,JavaScript:`await driver.findElement(By.className('${p.stableClass}'));`,Ruby:`driver.find_element(class: '${p.stableClass}')`})[l]},
-    {id:'by_tag',label:'By Tag Name',tip:'Last resort only — tag names are rarely unique.',avail:p=>true,
-      code:(p,l)=>({Java:`driver.findElement(By.tagName("${p.tag}"));`,Python:`driver.find_element(By.TAG_NAME, "${p.tag}")`,['C#']:`driver.FindElement(By.TagName("${p.tag}"));`,JavaScript:`await driver.findElement(By.tagName('${p.tag}'));`,Ruby:`driver.find_element(tag_name: '${p.tag}')`})[l]}
-  ],
-  playwright:[
-    {id:'pw_role',label:'getByRole',tip:'Most resilient — tests what users see and interact with via ARIA semantics.',avail:p=>!!p.role,
-      code:(p,l)=>{const r=p.role,nm=p.placeholder||p.ariaLabel||p.text||p.title||'';const nJs=nm?`, { name: '${nm}' }`:'',nPy=nm?`, name="${nm}"`:'',nJa=nm?`\n    .setName("${nm}")`:'',nCs=nm?`, new() { Name = "${nm}" }`:'';
-        return({JavaScript:`await page.getByRole('${r}'${nJs});`,TypeScript:`await page.getByRole('${r}'${nJs});`,Python:`page.get_by_role("${r}"${nPy})`,Java:`page.getByRole(AriaRole.${r.toUpperCase()}, new Page.GetByRoleOptions()${nJa});`,['C#']:`await page.GetByRole(AriaRole.${r.charAt(0).toUpperCase()+r.slice(1)}${nCs});`})[l];}},
-    {id:'pw_label',label:'getByLabel',tip:'Excellent for form fields — mirrors how screen readers identify inputs.',avail:p=>!!(p.ariaLabel||p.title),
-      code:(p,l)=>{const lb=p.ariaLabel||p.title;return({JavaScript:`await page.getByLabel('${lb}');`,TypeScript:`await page.getByLabel('${lb}');`,Python:`page.get_by_label("${lb}")`,Java:`page.getByLabel("${lb}")`,['C#']:`await page.GetByLabel("${lb}");`})[l];}},
-    {id:'pw_ph',label:'getByPlaceholder',tip:'Good for inputs without explicit labels — placeholder is user-visible and meaningful.',avail:p=>!!p.placeholder,
-      code:(p,l)=>({JavaScript:`await page.getByPlaceholder('${p.placeholder}');`,TypeScript:`await page.getByPlaceholder('${p.placeholder}');`,Python:`page.get_by_placeholder("${p.placeholder}")`,Java:`page.getByPlaceholder("${p.placeholder}")`,['C#']:`await page.GetByPlaceholder("${p.placeholder}");`})[l]},
-    {id:'pw_text',label:'getByText',tip:'Ideal for buttons & links — connects test to real user-facing text.',avail:p=>!!(p.text&&p.text.length>0&&p.text.length<100),
-      code:(p,l)=>({JavaScript:`await page.getByText('${p.text}');`,TypeScript:`await page.getByText('${p.text}');`,Python:`page.get_by_text("${p.text}")`,Java:`page.getByText("${p.text}")`,['C#']:`await page.GetByText("${p.text}");`})[l]},
-    {id:'pw_tid',label:'getByTestId',tip:'Stable & explicit — top-tier choice when a test attribute exists.',avail:p=>p.testAttrs.length>0&&!!p.testAttrs[0].value,
-      code:(p,l)=>({JavaScript:`await page.getByTestId('${p.testAttrs[0].value}');`,TypeScript:`await page.getByTestId('${p.testAttrs[0].value}');`,Python:`page.get_by_test_id("${p.testAttrs[0].value}")`,Java:`page.getByTestId("${p.testAttrs[0].value}")`,['C#']:`await page.GetByTestId("${p.testAttrs[0].value}");`})[l]},
-    {id:'pw_alt',label:'getByAltText',tip:'For images — alt text is accessible and usually stable.',avail:p=>!!p.alt,
-      code:(p,l)=>({JavaScript:`await page.getByAltText('${p.alt}');`,TypeScript:`await page.getByAltText('${p.alt}');`,Python:`page.get_by_alt_text("${p.alt}")`,Java:`page.getByAltText("${p.alt}")`,['C#']:`await page.GetByAltText("${p.alt}");`})[l]},
-    {id:'pw_css',label:'locator (CSS)',tip:'Flexible fallback — combine with has-text() or filter() for precision.',avail:p=>true,
-      code:(p,l)=>{const s=cssq(p);return({JavaScript:`await page.locator('${s}');`,TypeScript:`await page.locator('${s}');`,Python:`page.locator("${s}")`,Java:`page.locator("${s}")`,['C#']:`await page.Locator("${s}");`})[l];}},
-    {id:'pw_xpath',label:'locator (XPath)',tip:'Last resort — only when semantic or CSS locators cannot reach the element.',avail:p=>true,
-      code:(p,l)=>{const x=xp(p);return({JavaScript:`await page.locator('xpath=${x}');`,TypeScript:`await page.locator('xpath=${x}');`,Python:`page.locator("xpath=${x}")`,Java:`page.locator("xpath=${x}")`,['C#']:`await page.Locator("xpath=${x}");`})[l];}}
-  ],
-  cypress:[
-    {id:'cy_tid',label:'cy.get (Test Attribute)',tip:'Cypress best practice — data-cy/data-testid attrs survive refactors & rebrands.',avail:p=>p.testAttrs.length>0,
-      code:(p,l)=>{const s=p.testAttrs[0].value?`[${p.testAttrs[0].name}="${p.testAttrs[0].value}"]`:`[${p.testAttrs[0].name}]`;return `cy.get('${s}');`;}},
-    {id:'cy_id',label:'cy.get (ID)',tip:'Reliable if IDs are stable — be cautious with auto-generated IDs.',avail:p=>!!p.id,code:(p,l)=>`cy.get('#${CSS.escape(p.id)}');`},
-    {id:'cy_name',label:'cy.get (Name)',tip:'Good for form fields — name attribute is stable.',avail:p=>!!p.name,code:(p,l)=>`cy.get('[name="${p.name}"]');`},
-    {id:'cy_ph',label:'cy.get (Placeholder)',tip:'Use with caution — placeholder text may change with copy/UX updates.',avail:p=>!!p.placeholder,code:(p,l)=>`cy.get('[placeholder="${p.placeholder}"]');`},
-    {id:'cy_txt',label:'cy.contains (Text)',tip:'Natural for buttons & links — ties test to visible user-facing text.',avail:p=>!!(p.text&&p.text.length>0&&p.text.length<100),code:(p,l)=>`cy.contains('${p.text}');`},
-    {id:'cy_aria',label:'cy.get (Aria Label)',tip:'Accessibility-aware selector — robust when aria-label is consistently set.',avail:p=>!!p.ariaLabel,code:(p,l)=>`cy.get('[aria-label="${p.ariaLabel}"]');`},
-    {id:'cy_cls',label:'cy.get (Class)',tip:'Last resort — class names change frequently with component/styling updates.',avail:p=>!!p.stableClass,code:(p,l)=>`cy.get('.${p.stableClass}');`},
-    {id:'cy_css',label:'cy.get (CSS Selector)',tip:'Versatile fallback — combine tag and attribute for better specificity.',avail:p=>true,code:(p,l)=>`cy.get('${cssq(p)}');`}
-  ]
-};
-
-/* ════════════════════════════════════════
-   GENERATE
-════════════════════════════════════════ */
-function generateFromElement(el) {
-  const props=extractProps(el);
-  const defs=LD[state.framework].filter(d=>d.avail(props));
-  if(!defs.length){showErr('No locators could be generated for this element.');return;}
-  renderOutput(defs,props,el);
-}
-
-function generate() {
-  const raw=document.getElementById('htmlInput').value.trim();
-  hideErr();
-  if(!raw){showErr('Please paste an HTML element first.');return;}
-  const el=parseHTMLEl(raw);
-  if(!el){showErr("Could not parse HTML. Make sure it's a valid, single HTML element.");return;}
-  generateFromElement(el);
-}
-
-function renderOutput(defs,props,el) {
-  const section=document.getElementById('output-section');
-  const list=document.getElementById('locatorList');
-  document.getElementById('outputTitle').textContent=`${FRAMEWORKS[state.framework].name} Locators — ${state.language}`;
-  document.getElementById('outputMeta').textContent=`${defs.length} locator${defs.length!==1?'s':''} · <${el.tagName.toLowerCase()}>`;
-  list.innerHTML='';
-  defs.forEach((def,idx)=>{
-    const code=def.code(props,state.language);
-    const best=idx===0;
-    const card=document.createElement('div');
-    card.className='loc-card'+(best?' is-best':'');
-    card.setAttribute('tabindex','0'); card.style.animationDelay=idx*40+'ms';
-    card.innerHTML=`
-      <div class="loc-header">
-        <div class="loc-meta">
-          <div class="loc-rank">${idx+1}</div>
-          <div class="loc-type">${def.label}</div>
-          ${best?'<span class="badge-best">✦ Best</span>':''}
-        </div>
-        <button class="copy-btn" aria-label="Copy ${def.label}">⎘ <span class="cl">Copy</span></button>
-      </div>
-      <pre class="loc-code">${eh(code)}</pre>
-      <div class="loc-tip">${def.tip}</div>`;
-    const btn=card.querySelector('.copy-btn');
-    const doCopy=()=>{ navigator.clipboard.writeText(code).then(()=>{ btn.classList.add('copied'); btn.querySelector('.cl').textContent='Copied!'; showToast('Copied: '+def.label); setTimeout(()=>{btn.classList.remove('copied');btn.querySelector('.cl').textContent='Copy';},1800); }); };
-    card.addEventListener('click',doCopy);
-    card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();doCopy();}});
-    btn.addEventListener('click',e=>{e.stopPropagation();doCopy();});
-    list.appendChild(card);
-  });
-  section.classList.add('show');
-  section.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-/* ════════════════════════════════════════
-   FULL DOM MODE
-════════════════════════════════════════ */
-function loadDOM() {
-  const raw=document.getElementById('domPasteArea').value.trim();
-  hideDomErr();
-  if(!raw){showDomErr('Please upload a file or paste HTML first.');return;}
-  const doc=new DOMParser().parseFromString(raw,'text/html');
-  state.domDoc=doc; state.domHtml=raw;
-  const allEls=doc.querySelectorAll('*').length;
-  const intEls=getInteractive(doc,'').length;
-  document.getElementById('domStats').innerHTML=
-    `<span class="dom-stat">Elements: <strong>${allEls}</strong></span>`+
-    `<span class="dom-stat">Interactive: <strong>${intEls}</strong></span>`;
-  document.getElementById('dom-input-card').classList.add('hidden');
-  document.getElementById('dom-explorer-card').classList.remove('hidden');
-  document.getElementById('interactive-count').textContent=intEls;
-  setDomView('interactive');
-}
-
-function reloadDOM(){
-  state.domDoc=null; state.domHtml='';
-  document.getElementById('dom-explorer-card').classList.add('hidden');
-  document.getElementById('dom-input-card').classList.remove('hidden');
-  document.getElementById('domPasteArea').value='';
-  clearFileChip(); clearSelInd();
-  document.getElementById('output-section').classList.remove('show');
-}
-
-/* Interactive elements */
-const ISEL='input,button,a[href],select,textarea,[role="button"],[role="link"],[role="checkbox"],[role="radio"],[onclick],label[for]';
-
-function getInteractive(doc,q){
-  const els=[...doc.querySelectorAll(ISEL)];
-  if(!q) return els;
-  const ql=q.toLowerCase();
-  return els.filter(el=>[el.tagName,el.id,el.getAttribute('name'),el.getAttribute('class'),el.getAttribute('placeholder'),el.textContent.trim(),el.getAttribute('type')].some(v=>v&&v.toLowerCase().includes(ql)));
-}
-
-function renderInteractive(q=''){
-  const list=document.getElementById('el-list');
-  const els=getInteractive(state.domDoc,q);
-  document.getElementById('interactive-count').textContent=els.length;
-  list.innerHTML='';
-  if(!els.length){list.innerHTML=`<div class="empty-state"><span class="es-icon">🔍</span><p>No elements found${q?' for "'+eh(q)+'"':''}.</p></div>`;return;}
-  els.slice(0,300).forEach(el=>{
-    const tag=el.tagName.toLowerCase(), type=el.getAttribute('type');
-    const id=el.id, name=el.getAttribute('name'), ph=el.getAttribute('placeholder');
-    const txt=el.textContent.trim().slice(0,50);
-    const cls=(el.getAttribute('class')||'').split(' ').filter(c=>c&&!/--(active|selected|hover|focus|open|show)$/.test(c)).slice(0,2).join(' ');
-    let primary=id?`#${id}`:name?`[name="${name}"]`:ph?`"${ph}"`:txt?`"${txt}"`:cls?`.${cls.split(' ')[0]}`:`<${tag}>`;
-    const td=type?`${tag}[${type}]`:tag;
-    const secondary=[type?`type="${type}"`:null,cls&&!primary.includes(cls)?cls:null].filter(Boolean).join(' · ');
-    const item=document.createElement('div');
-    item.className='el-item'; item.setAttribute('tabindex','0'); item.setAttribute('role','button');
-    item.innerHTML=`<div class="el-tag">&lt;${eh(td)}&gt;</div><div class="el-info"><div class="el-primary">${eh(primary)}</div>${secondary?`<div class="el-secondary">${eh(secondary)}</div>`:''}</div><div class="el-arrow">→</div>`;
-    const doSel=()=>{document.querySelectorAll('.el-item.selected').forEach(e=>e.classList.remove('selected'));item.classList.add('selected');selectEl(el);};
-    item.addEventListener('click',doSel);
-    item.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();doSel();}});
-    list.appendChild(item);
-  });
-  if(els.length>300){const m=document.createElement('div');m.className='empty-state';m.innerHTML=`<p>Showing 300 of ${els.length}. Use search to narrow down.</p>`;list.appendChild(m);}
-}
-
-/* DOM Tree */
-function renderTree(q=''){
-  const c=document.getElementById('tree-container');
-  c.innerHTML='';
-  const body=state.domDoc.body;
-  if(!body){c.innerHTML='<div class="empty-state"><p>No body found.</p></div>';return;}
-  [...body.children].forEach(child=>c.appendChild(buildNode(child,0)));
-}
-
-function buildNode(el,depth){
-  const tag=el.tagName.toLowerCase(), id=el.id;
-  const cls=(el.getAttribute('class')||'').split(' ').filter(Boolean).slice(0,2).join('.');
-  const kids=[...el.children], hasK=kids.length>0;
-  let lbl=`<span class="tree-tag">&lt;${eh(tag)}&gt;</span>`;
-  if(id) lbl+=` <span class="tree-id">#${eh(id)}</span>`;
-  if(cls) lbl+=` <span class="tree-cls">.${eh(cls)}</span>`;
-  const node=document.createElement('div');
-  node.className='tree-node';
-  const row=document.createElement('div');
-  row.className='tree-row'; row.style.paddingLeft=(depth*16+6)+'px';
-  row.setAttribute('tabindex','0'); row.setAttribute('role','treeitem');
-  const tog=document.createElement('span');
-  tog.className='tree-toggle'+(hasK?'':' leaf'); tog.textContent=hasK?'▶':'·'; tog.setAttribute('aria-hidden','true');
-  const lbl_el=document.createElement('span'); lbl_el.innerHTML=lbl;
-  row.appendChild(tog); row.appendChild(lbl_el);
-  const cw=document.createElement('div'); cw.className='tree-children';
-  const expand=()=>{
-    const open=cw.classList.toggle('open'); tog.textContent=open?'▼':'▶';
-    if(open&&!cw.dataset.r){kids.forEach(k=>cw.appendChild(buildNode(k,depth+1)));cw.dataset.r='1';}
-  };
-  row.addEventListener('click',e=>{
-    e.stopPropagation();
-    document.querySelectorAll('.tree-row.selected').forEach(r=>r.classList.remove('selected'));
-    row.classList.add('selected');
-    selectEl(el);
-    if(hasK) expand();
-  });
-  tog.addEventListener('click',e=>{e.stopPropagation();if(hasK)expand();});
-  row.addEventListener('keydown',e=>{
-    if(e.key==='Enter'||e.key===' '){e.preventDefault();row.click();}
-    if(e.key==='ArrowRight'&&hasK){e.preventDefault();if(!cw.classList.contains('open'))expand();}
-    if(e.key==='ArrowLeft'){e.preventDefault();if(cw.classList.contains('open')){cw.classList.remove('open');tog.textContent='▶';}}
-  });
-  node.appendChild(row); node.appendChild(cw);
-  // Auto-expand first 2 levels
-  if(depth<1&&hasK){cw.classList.add('open');tog.textContent='▼';kids.forEach(k=>cw.appendChild(buildNode(k,depth+1)));cw.dataset.r='1';}
-  return node;
-}
-
-/* Preview */
-function renderPreview(){
-  const iframe=document.getElementById('dom-iframe');
-  const script=`<script>(function(){document.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();var c=e.target.cloneNode(false);c.style.outline='';c.style.outlineOffset='';c.style.cursor='';window.parent.postMessage({type:'PRACHI_SELECT',html:c.outerHTML},'*');},true);document.addEventListener('mouseover',function(e){e.target.style.outline='2px solid #6366f1';e.target.style.outlineOffset='2px';e.target.style.cursor='pointer';},true);document.addEventListener('mouseout',function(e){e.target.style.outline='';e.target.style.outlineOffset='';e.target.style.cursor='';},true);})();<\/script>`;
-  let html=state.domHtml;
-  if(html.includes('</body>')) html=html.replace('</body>',script+'</body>');
-  else html+=script;
-  iframe.srcdoc=html;
-}
-
-window.addEventListener('message',e=>{
-  if(e.data&&e.data.type==='PRACHI_SELECT'){
-    const el=parseHTMLEl(e.data.html);
-    if(el){selectEl(el);showToast('Element captured from preview!');}
+  function subtreeMatches(el, ql){
+    if(!ql) return true;
+    if(nodeMatches(el,ql)) return true;
+    return [...el.children].some(c=>subtreeMatches(c,ql));
   }
-});
 
-/* Select element */
-function selectEl(el){
-  state.selectedEl=el;
-  const tag=(el.tagName||'?').toLowerCase();
-  const id=el.getAttribute?el.getAttribute('id'):'';
-  const name=el.getAttribute?el.getAttribute('name'):'';
-  const ph=el.getAttribute?el.getAttribute('placeholder'):'';
-  const label=id?`#${id}`:name?`[name="${name}"]`:ph?`"${ph}"`:tag;
-  document.getElementById('selInd').classList.remove('hidden');
-  document.getElementById('selIndVal').textContent=`<${tag}> ${label}`;
-  generateFromElement(el);
-}
+  function buildNode(el,depth,ql=''){
+    // If searching and neither this node nor any descendant matches, skip entirely
+    if(ql && !subtreeMatches(el,ql)) return null;
 
-function clearSelInd(){
-  document.getElementById('selInd').classList.add('hidden');
-  document.getElementById('selIndVal').textContent='';
-  state.selectedEl=null;
-}
+    const tag=el.tagName.toLowerCase(), id=el.id;
+    const cls=(el.getAttribute('class')||'').split(' ').filter(Boolean).slice(0,2).join('.');
+    const kids=[...el.children], hasK=kids.length>0;
+    const isMatch=ql && nodeMatches(el,ql);
 
-/* View switching */
-function setDomView(v){
-  state.domView=v;
-  const q=document.getElementById('domSearch').value.trim();
-  ['interactive','tree','preview'].forEach(vv=>{
-    document.getElementById('view-'+vv).classList.toggle('hidden',vv!==v);
-    const t=document.querySelector(`.view-tab[data-view="${vv}"]`);
-    if(t){t.classList.toggle('active',vv===v);t.setAttribute('aria-selected',vv===v);}
-  });
-  if(v==='interactive') renderInteractive(q);
-  else if(v==='tree') renderTree(q);
-  else if(v==='preview') renderPreview();
-}
+    let lbl=`<span class="tree-tag">&lt;${eh(tag)}&gt;</span>`;
+    if(id) lbl+=` <span class="tree-id">#${eh(id)}</span>`;
+    if(cls) lbl+=` <span class="tree-cls">.${eh(cls)}</span>`;
+    if(isMatch) lbl+=` <span class="tree-match-badge">match</span>`;
 
-document.getElementById('domSearch').addEventListener('input',function(){
-  if(state.domView==='interactive') renderInteractive(this.value.trim());
-  else if(state.domView==='tree') renderTree(this.value.trim());
-});
-
-document.querySelectorAll('.view-tab').forEach(btn=>{
-  btn.addEventListener('click',()=>setDomView(btn.dataset.view));
-  btn.addEventListener('keydown',e=>{
-    const tabs=[...document.querySelectorAll('.view-tab')],i=tabs.indexOf(btn);
-    if(e.key==='ArrowRight'){e.preventDefault();tabs[(i+1)%tabs.length].focus();setDomView(tabs[(i+1)%tabs.length].dataset.view);}
-    if(e.key==='ArrowLeft'){e.preventDefault();tabs[(i-1+tabs.length)%tabs.length].focus();setDomView(tabs[(i-1+tabs.length)%tabs.length].dataset.view);}
-  });
-});
-
-document.getElementById('loadDomBtn').addEventListener('click',loadDOM);
-document.getElementById('domClearBtn').addEventListener('click',()=>{document.getElementById('domPasteArea').value='';clearFileChip();hideDomErr();});
-document.getElementById('reloadDomBtn').addEventListener('click',reloadDOM);
-document.getElementById('clearSelBtn').addEventListener('click',clearSelInd);
-
-/* ════════════════════════════════════════
-   FILE UPLOAD
-════════════════════════════════════════ */
-const dz=document.getElementById('dropzone'), fi=document.getElementById('fileInput');
-dz.addEventListener('click',()=>fi.click());
-dz.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fi.click();}});
-dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
-dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
-dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0]);});
-fi.addEventListener('change',()=>{if(fi.files[0])readFile(fi.files[0]);});
-
-function readFile(f){
-  if(!f.name.match(/\.html?$/i)){showDomErr('Please upload a .html or .htm file.');return;}
-  const r=new FileReader();
-  r.onload=e=>{document.getElementById('domPasteArea').value=e.target.result;showFileChip(f.name);hideDomErr();};
-  r.readAsText(f);
-}
-function showFileChip(n){
-  const c=document.getElementById('fileChip');
-  c.classList.remove('hidden');
-  c.innerHTML=`<span>📄 ${eh(n)}</span> <span class="fc-remove" tabindex="0" role="button" aria-label="Remove file" onclick="clearFileChip()">✕</span>`;
-}
-function clearFileChip(){const c=document.getElementById('fileChip');c.classList.add('hidden');c.innerHTML='';fi.value='';}
-
-/* ════════════════════════════════════════
-   MODE SWITCHER
-════════════════════════════════════════ */
-document.querySelectorAll('.mode-tab').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const m=btn.dataset.mode; state.mode=m;
-    document.querySelectorAll('.mode-tab').forEach(b=>{b.classList.toggle('active',b.dataset.mode===m);b.setAttribute('aria-selected',b.dataset.mode===m);});
-    document.getElementById('panel-single').classList.toggle('hidden',m!=='single');
-    document.getElementById('panel-dom').classList.toggle('hidden',m!=='dom');
-    document.getElementById('output-section').classList.remove('show');
-  });
-});
-
-/* ════════════════════════════════════════
-   FRAMEWORK / LANGUAGE
-════════════════════════════════════════ */
-function setFramework(fw){
-  state.framework=fw;
-  document.querySelectorAll('.fw-btn').forEach(b=>{const a=b.dataset.fw===fw;b.classList.toggle('active',a);b.setAttribute('aria-checked',String(a));b.tabIndex=a?0:-1;});
-  const langs=FRAMEWORKS[fw].languages; state.language=langs[0];
-  renderLangPills(langs);
-  if(document.getElementById('output-section').classList.contains('show')){
-    if(state.mode==='single') generate();
-    else if(state.selectedEl) generateFromElement(state.selectedEl);
-  }
-}
-
-function renderLangPills(langs){
-  const wrap=document.getElementById('langWrap'); wrap.innerHTML='';
-  langs.forEach((lang,i)=>{
-    const btn=document.createElement('button');
-    btn.className='lang-pill'+(i===0?' active':''); btn.textContent=lang;
-    btn.setAttribute('role','radio'); btn.setAttribute('aria-checked',String(i===0)); btn.tabIndex=i===0?0:-1;
-    btn.addEventListener('click',()=>setLanguage(lang));
-    btn.addEventListener('keydown',e=>{
-      const ps=[...wrap.querySelectorAll('.lang-pill')],idx=ps.indexOf(btn);
-      if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();ps[(idx+1)%ps.length].focus();setLanguage(langs[(idx+1)%langs.length]);}
-      if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();ps[(idx-1+ps.length)%ps.length].focus();setLanguage(langs[(idx-1+langs.length)%langs.length]);}
+    const node=document.createElement('div');
+    node.className='tree-node';
+    const row=document.createElement('div');
+    row.className='tree-row'+(isMatch?' tree-match':'');
+    row.style.paddingLeft=(depth*16+6)+'px';
+    row.setAttribute('tabindex','0'); row.setAttribute('role','treeitem');
+    const tog=document.createElement('span');
+    tog.className='tree-toggle'+(hasK?'':' leaf'); tog.textContent=hasK?'▶':'·'; tog.setAttribute('aria-hidden','true');
+    const lbl_el=document.createElement('span'); lbl_el.innerHTML=lbl;
+    row.appendChild(tog); row.appendChild(lbl_el);
+    const cw=document.createElement('div'); cw.className='tree-children';
+    const expand=()=>{
+      const open=cw.classList.toggle('open'); tog.textContent=open?'▼':'▶';
+      if(open&&!cw.dataset.r){
+        kids.forEach(k=>{ const n=buildNode(k,depth+1,ql); if(n) cw.appendChild(n); });
+        cw.dataset.r='1';
+      }
+    };
+    row.addEventListener('click',e=>{
+      e.stopPropagation();
+      document.querySelectorAll('.tree-row.selected').forEach(r=>r.classList.remove('selected'));
+      row.classList.add('selected');
+      selectEl(el);
+      if(hasK) expand();
     });
-    wrap.appendChild(btn);
-  });
-}
-
-function setLanguage(lang){
-  state.language=lang;
-  const langs=FRAMEWORKS[state.framework].languages;
-  document.querySelectorAll('.lang-pill').forEach((b,i)=>{const a=langs[i]===lang;b.classList.toggle('active',a);b.setAttribute('aria-checked',String(a));b.tabIndex=a?0:-1;});
-  if(document.getElementById('output-section').classList.contains('show')){
-    if(state.mode==='single') generate();
-    else if(state.selectedEl) generateFromElement(state.selectedEl);
+    tog.addEventListener('click',e=>{e.stopPropagation();if(hasK)expand();});
+    row.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();row.click();}
+      if(e.key==='ArrowRight'&&hasK){e.preventDefault();if(!cw.classList.contains('open'))expand();}
+      if(e.key==='ArrowLeft'){e.preventDefault();if(cw.classList.contains('open')){cw.classList.remove('open');tog.textContent='▶';}}
+    });
+    node.appendChild(row); node.appendChild(cw);
+    // Auto-expand: always expand when searching so matches are visible; otherwise expand first 2 levels
+    if((ql || depth<1) && hasK){
+      cw.classList.add('open'); tog.textContent='▼';
+      kids.forEach(k=>{ const n=buildNode(k,depth+1,ql); if(n) cw.appendChild(n); });
+      cw.dataset.r='1';
+    }
+    return node;
   }
-}
 
-document.getElementById('fwGrid').addEventListener('keydown',e=>{
-  const btns=[...document.querySelectorAll('.fw-btn')],idx=btns.findIndex(b=>b===document.activeElement);
-  if(idx===-1)return;
-  if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();btns[(idx+1)%btns.length].focus();setFramework(btns[(idx+1)%btns.length].dataset.fw);}
-  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();btns[(idx-1+btns.length)%btns.length].focus();setFramework(btns[(idx-1+btns.length)%btns.length].dataset.fw);}
-});
-document.querySelectorAll('.fw-btn').forEach(b=>b.addEventListener('click',()=>setFramework(b.dataset.fw)));
+  /* Preview */
+  function renderPreview(){
+    const iframe=document.getElementById('dom-iframe');
+    const script=`<script>(function(){document.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();var c=e.target.cloneNode(false);c.style.outline='';c.style.outlineOffset='';c.style.cursor='';window.parent.postMessage({type:'PRACHI_SELECT',html:c.outerHTML},'*');},true);document.addEventListener('mouseover',function(e){e.target.style.outline='2px solid #6366f1';e.target.style.outlineOffset='2px';e.target.style.cursor='pointer';},true);document.addEventListener('mouseout',function(e){e.target.style.outline='';e.target.style.outlineOffset='';e.target.style.cursor='';},true);})();<\/script>`;
+    let html=state.domHtml;
+    if(html.includes('</body>')) html=html.replace('</body>',script+'</body>');
+    else html+=script;
+    iframe.srcdoc=html;
+  }
 
-/* ════════════════════════════════════════
-   SINGLE ELEMENT CONTROLS
-════════════════════════════════════════ */
-document.getElementById('generateBtn').addEventListener('click',generate);
-document.getElementById('clearBtn').addEventListener('click',()=>{document.getElementById('htmlInput').value='';document.getElementById('output-section').classList.remove('show');hideErr();document.getElementById('htmlInput').focus();});
-document.getElementById('htmlInput').addEventListener('keydown',e=>{
-  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();generate();}
-  if(e.key==='Escape'){document.getElementById('htmlInput').value='';document.getElementById('output-section').classList.remove('show');hideErr();}
-});
+  window.addEventListener('message',e=>{
+    if(e.data&&e.data.type==='PRACHI_SELECT'){
+      const el=parseHTMLEl(e.data.html);
+      if(el){selectEl(el);showToast('Element captured from preview!');}
+    }
+  });
 
-/* ════════════════════════════════════════
-   HELPERS
-════════════════════════════════════════ */
-function showErr(m){const b=document.getElementById('errorBar');document.getElementById('errorText').textContent=m;b.classList.add('show');}
-function hideErr(){document.getElementById('errorBar').classList.remove('show');}
-function showDomErr(m){const b=document.getElementById('domErrorBar');document.getElementById('domErrorText').textContent=m;b.classList.add('show');}
-function hideDomErr(){document.getElementById('domErrorBar').classList.remove('show');}
+  /* Select element */
+  function selectEl(el){
+    state.selectedEl=el;
+    const tag=(el.tagName||'?').toLowerCase();
+    const id=el.getAttribute?el.getAttribute('id'):'';
+    const name=el.getAttribute?el.getAttribute('name'):'';
+    const ph=el.getAttribute?el.getAttribute('placeholder'):'';
+    const label=id?`#${id}`:name?`[name="${name}"]`:ph?`"${ph}"`:tag;
+    document.getElementById('selInd').classList.remove('hidden');
+    document.getElementById('selIndVal').textContent=`<${tag}> ${label}`;
+    generateFromElement(el);
+  }
 
-let tt;
-function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200);}
+  function clearSelInd(){
+    document.getElementById('selInd').classList.add('hidden');
+    document.getElementById('selIndVal').textContent='';
+    state.selectedEl=null;
+  }
 
-/* ════════════════════════════════════════
-   THEME
-════════════════════════════════════════ */
-function applyTheme(th){
-  document.documentElement.setAttribute('data-theme',th);
-  document.getElementById('themeIcon').textContent=th==='dark'?'☀️':'🌙';
-  document.getElementById('themeLabel').textContent=th==='dark'?'Light':'Dark';
-  localStorage.setItem('prachi-theme',th);
-}
-document.getElementById('themeToggle').addEventListener('click',()=>applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'));
+  /* View switching */
+  function setDomView(v){
+    state.domView=v;
+    const q=document.getElementById('domSearch').value.trim();
+    ['interactive','tree','preview'].forEach(vv=>{
+      document.getElementById('view-'+vv).classList.toggle('hidden',vv!==v);
+      const t=document.querySelector(`.view-tab[data-view="${vv}"]`);
+      if(t){t.classList.toggle('active',vv===v);t.setAttribute('aria-selected',vv===v);}
+    });
+    if(v==='interactive') renderInteractive(q);
+    else if(v==='tree') renderTree(q);
+    else if(v==='preview') renderPreview();
+  }
 
-/* ════════════════════════════════════════
-   INIT
-════════════════════════════════════════ */
-applyTheme(localStorage.getItem('prachi-theme')||'dark');
-renderLangPills(FRAMEWORKS[state.framework].languages);
+  document.getElementById('domSearch').addEventListener('input',function(){
+    if(state.domView==='interactive') renderInteractive(this.value.trim());
+    else if(state.domView==='tree') renderTree(this.value.trim());
+  });
+
+  document.querySelectorAll('.view-tab').forEach(btn=>{
+    btn.addEventListener('click',()=>setDomView(btn.dataset.view));
+    btn.addEventListener('keydown',e=>{
+      const tabs=[...document.querySelectorAll('.view-tab')],i=tabs.indexOf(btn);
+      if(e.key==='ArrowRight'){e.preventDefault();tabs[(i+1)%tabs.length].focus();setDomView(tabs[(i+1)%tabs.length].dataset.view);}
+      if(e.key==='ArrowLeft'){e.preventDefault();tabs[(i-1+tabs.length)%tabs.length].focus();setDomView(tabs[(i-1+tabs.length)%tabs.length].dataset.view);}
+    });
+  });
+
+  document.getElementById('loadDomBtn').addEventListener('click',loadDOM);
+  document.getElementById('domClearBtn').addEventListener('click',()=>{document.getElementById('domPasteArea').value='';clearFileChip();hideDomErr();});
+  document.getElementById('reloadDomBtn').addEventListener('click',reloadDOM);
+  document.getElementById('clearSelBtn').addEventListener('click',clearSelInd);
+
+  // -- FILE UPLOAD --
+  const dz=document.getElementById('dropzone'), fi=document.getElementById('fileInput');
+  dz.addEventListener('click',()=>fi.click());
+  dz.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fi.click();}});
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0]);});
+  fi.addEventListener('change',()=>{if(fi.files[0])readFile(fi.files[0]);});
+
+  function readFile(f){
+    if(!f.name.match(/\.html?$/i)){showDomErr('Please upload a .html or .htm file.');return;}
+    const r=new FileReader();
+    r.onload=e=>{document.getElementById('domPasteArea').value=e.target.result;showFileChip(f.name);hideDomErr();};
+    r.readAsText(f);
+  }
+  function showFileChip(n){
+    const c=document.getElementById('fileChip');
+    c.classList.remove('hidden');
+    c.innerHTML=`<span>📄 ${eh(n)}</span> <span class="fc-remove" tabindex="0" role="button" aria-label="Remove file" onclick="clearFileChip()">✕</span>`;
+  }
+  function clearFileChip(){const c=document.getElementById('fileChip');c.classList.add('hidden');c.innerHTML='';fi.value='';}
+
+  // -- MODE SWITCHER --
+  document.querySelectorAll('.mode-tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const m=btn.dataset.mode; state.mode=m;
+      document.querySelectorAll('.mode-tab').forEach(b=>{b.classList.toggle('active',b.dataset.mode===m);b.setAttribute('aria-selected',b.dataset.mode===m);});
+      document.getElementById('panel-single').classList.toggle('hidden',m!=='single');
+      document.getElementById('panel-dom').classList.toggle('hidden',m!=='dom');
+      document.getElementById('output-section').classList.remove('show');
+    });
+  });
+
+  // -- FRAMEWORK / LANGUAGE --
+  function setFramework(fw){
+    state.framework=fw;
+    document.querySelectorAll('.fw-btn').forEach(b=>{const a=b.dataset.fw===fw;b.classList.toggle('active',a);b.setAttribute('aria-checked',String(a));b.tabIndex=a?0:-1;});
+    const langs=FRAMEWORKS[fw].languages; state.language=langs[0];
+    renderLangPills(langs);
+    if(document.getElementById('output-section').classList.contains('show')){
+      if(state.mode==='single') generate();
+      else if(state.selectedEl) generateFromElement(state.selectedEl);
+    }
+  }
+
+  function renderLangPills(langs){
+    const wrap=document.getElementById('langWrap'); wrap.innerHTML='';
+    langs.forEach((lang,i)=>{
+      const btn=document.createElement('button');
+      btn.className='lang-pill'+(i===0?' active':''); btn.textContent=lang;
+      btn.setAttribute('role','radio'); btn.setAttribute('aria-checked',String(i===0)); btn.tabIndex=i===0?0:-1;
+      btn.addEventListener('click',()=>setLanguage(lang));
+      btn.addEventListener('keydown',e=>{
+        const ps=[...wrap.querySelectorAll('.lang-pill')],idx=ps.indexOf(btn);
+        if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();ps[(idx+1)%ps.length].focus();setLanguage(langs[(idx+1)%langs.length]);}
+        if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();ps[(idx-1+ps.length)%ps.length].focus();setLanguage(langs[(idx-1+langs.length)%langs.length]);}
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  function setLanguage(lang){
+    state.language=lang;
+    const langs=FRAMEWORKS[state.framework].languages;
+    document.querySelectorAll('.lang-pill').forEach((b,i)=>{const a=langs[i]===lang;b.classList.toggle('active',a);b.setAttribute('aria-checked',String(a));b.tabIndex=a?0:-1;});
+    if(document.getElementById('output-section').classList.contains('show')){
+      if(state.mode==='single') generate();
+      else if(state.selectedEl) generateFromElement(state.selectedEl);
+    }
+  }
+
+  document.getElementById('fwGrid').addEventListener('keydown',e=>{
+    const btns=[...document.querySelectorAll('.fw-btn')],idx=btns.findIndex(b=>b===document.activeElement);
+    if(idx===-1)return;
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();btns[(idx+1)%btns.length].focus();setFramework(btns[(idx+1)%btns.length].dataset.fw);}
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();btns[(idx-1+btns.length)%btns.length].focus();setFramework(btns[(idx-1+btns.length)%btns.length].dataset.fw);}
+  });
+  document.querySelectorAll('.fw-btn').forEach(b=>b.addEventListener('click',()=>setFramework(b.dataset.fw)));
+
+  // -- SINGLE ELEMENT CONTROLS --
+  document.getElementById('generateBtn').addEventListener('click',generate);
+  document.getElementById('clearBtn').addEventListener('click',()=>{document.getElementById('htmlInput').value='';document.getElementById('output-section').classList.remove('show');hideErr();document.getElementById('htmlInput').focus();});
+  document.getElementById('htmlInput').addEventListener('keydown',e=>{
+    if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();generate();}
+    if(e.key==='Escape'){document.getElementById('htmlInput').value='';document.getElementById('output-section').classList.remove('show');hideErr();}
+  });
+
+  // -- HELPERS --
+  function showErr(m){const b=document.getElementById('errorBar');document.getElementById('errorText').textContent=m;b.classList.add('show');}
+  function hideErr(){document.getElementById('errorBar').classList.remove('show');}
+  function showDomErr(m){const b=document.getElementById('domErrorBar');document.getElementById('domErrorText').textContent=m;b.classList.add('show');}
+  function hideDomErr(){document.getElementById('domErrorBar').classList.remove('show');}
+
+  let tt;
+  function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200);}
+
+  function showCopyErr(btn){
+    const orig=btn.querySelector('.cl').textContent;
+    btn.classList.add('copy-err');
+    btn.querySelector('.cl').textContent='Failed!';
+    showErrToast('Copy failed — please copy the code manually.');
+    setTimeout(()=>{btn.classList.remove('copy-err');btn.querySelector('.cl').textContent=orig;},2500);
+  }
+
+  let et;
+  function showErrToast(m){
+    const t=document.getElementById('errToast');
+    document.getElementById('errToastMsg').textContent=m;
+    t.classList.add('show');
+    clearTimeout(et);
+    et=setTimeout(()=>t.classList.remove('show'),3500);
+  }
+
+  // -- THEME --
+  function applyTheme(th){
+    document.documentElement.setAttribute('data-theme',th);
+    document.getElementById('themeIcon').textContent=th==='dark'?'☀️':'🌙';
+    document.getElementById('themeLabel').textContent=th==='dark'?'Light':'Dark';
+    localStorage.setItem('prachi-theme',th);
+  }
+  document.getElementById('themeToggle').addEventListener('click',()=>applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'));
+
+  // -- INIT --
+  applyTheme(localStorage.getItem('prachi-theme')||'dark');
+  renderLangPills(FRAMEWORKS[state.framework].languages);
 </script>
 </body>
 </html>
